@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Reservation</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var today = new Date().toISOString().split('T')[0];
+      document.getElementById("startDate").setAttribute("min", today);
+      document.getElementById("endDate").setAttribute("min", today);
+    });
+  </script>
+</head>
+<body>
+<div class="container">
+  <h1>Add Reservation</h1>
+
+  <!-- Başarı mesajı -->
+  <div th:if="${param.success}" class="alert alert-success" role="alert">
+    Reservation has been successfully added.
+  </div>
+
+  <form th:action="@{/receptionist/addReservation}" method="post">
+    <!-- Client Information -->
+    <fieldset>
+      <legend>Client Information</legend>
+      <div th:object="${client}">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" id="name" th:field="*{name}" required />
+        </div>
+        <div class="form-group">
+          <label for="surname">Surname:</label>
+          <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" id="email" th:field="*{email}" required />
+        </div>
+        <div class="form-group">
+          <label for="telephone">Telephone:</label>
+          <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"/>
+        </div>
+        <div class="form-group">
+          <label for="birthdate">Birthdate:</label>
+          <input type="date" class="form-control" id="birthdate" th:field="*{birthdate}" required />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Reservation Information -->
+    <fieldset>
+      <legend>Reservation Information</legend>
+      <div th:object="${reservation}">
+        <div class="form-group">
+          <label for="room">Room:</label>
+          <select class="form-control" id="room" th:field="*{roomNumber}">
+            <option th:each="room : ${rooms}" th:value="${room.roomNumber}"
+                    th:text="${room.roomNumber + ' - ' + room.roomCategory + ' (' + (room.occupied ? 'Occupied' : 'Available') + ')'}"
+                    th:disabled="${room.occupied}"></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="startDate">Start Date:</label>
+          <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required />
+        </div>
+        <div class="form-group">
+          <label for="endDate">End Date:</label>
+          <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required />
+        </div>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Add Reservation</button>
+    <a href="/receptionist/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
+  </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

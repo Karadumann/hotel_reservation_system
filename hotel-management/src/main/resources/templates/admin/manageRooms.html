@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Rooms</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Manage Rooms</h1>
+
+    <!-- Başarı mesajı -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <form th:action="@{/admin/addRoom}" method="post">
+        <!-- Oda Ekleme Formu -->
+        <fieldset>
+            <legend>Add Room</legend>
+            <div th:object="${newRoom}">
+                <div class="form-group">
+                    <label for="roomNumber">Room Number:</label>
+                    <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" required />
+                </div>
+                <div class="form-group">
+                    <label for="roomCategory">Room Category</label>
+                    <select class="form-control" id="roomCategory" th:field="*{roomCategory}">
+                        <option value="Standard">Standard</option>
+                        <option value="Deluxe">Deluxe</option>
+                        <option value="Suite">Suite</option>
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                        <option value="Family">Family</option>
+                        <option value="Business">Business</option>
+                        <option value="Presidential Suite">Presidential Suite</option>
+                        <option value="Honeymoon">Honeymoon</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Bungalow">Bungalow</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Executive Suite">Executive Suite</option>
+                        <option value="Ocean View Room">Ocean View Room</option>
+                        <option value="Garden View Room">Garden View Room</option>
+                        <option value="Poolside Room">Poolside Room</option>
+                        <option value="Accessible Room">Accessible Room</option>
+                        <option value="Interconnecting Room">Interconnecting Room</option>
+                        <option value="Pet-Friendly Room">Pet-Friendly Room</option>
+                        <option value="Smoking Room">Smoking Room</option>
+                        <option value="Non-smoking Room">Non-smoking Room</option>
+                        <option value="Long Stay Room">Long Stay Room</option>
+                        <option value="Spa Suite">Spa Suite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="hotel">Hotel:</label>
+                    <select class="form-control" id="hotel" name="hotelId">
+                        <option th:each="hotel : ${hotels}" th:value="${hotel.id}" th:text="${hotel.name}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Room</button>
+            </div>
+        </fieldset>
+    </form>
+
+    <hr/>
+
+    <!-- Oda Listesi -->
+    <h2>Room List</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Room Number</th>
+            <th>Room Category</th>
+            <th>Status</th>
+            <th>Hotel</th> <!-- Yeni sütun eklendi -->
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room : ${rooms}">
+            <td th:text="${room.roomNumber}">Room Number</td>
+            <td th:text="${room.roomCategory}">Room Category</td>
+            <td th:text="${room.status}">Status</td>
+            <td th:text="${room.hotel.name}">Hotel</td> <!-- Hotel bilgisi eklendi -->
+            <td>
+                <form th:action="@{/api/rooms/{roomId}/status(roomId=${room.id})}" method="post">
+                    <select name="status" class="form-control">
+                        <option th:each="status : ${T(com.example.hotel_management.model.RoomStatus).values()}"
+                                th:value="${status.name()}"
+                                th:text="${status.name()}"
+                                th:selected="${room.status.name() == status.name()}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+                <form th:action="@{/admin/deleteRoom/{roomId}(roomId=${room.id})}" method="post">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/admin/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
