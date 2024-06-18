@@ -1,0 +1,11 @@
+GET http://localhost:8080/owner
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+cookie: JSESSIONID=24E7837F1F55650C5BEB15BBD861A00A
+content-length: 0
+
+<> 2024-06-14T162953.200.html
+
+###
+
