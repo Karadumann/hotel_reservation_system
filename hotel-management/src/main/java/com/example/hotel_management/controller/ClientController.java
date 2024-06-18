@@ -14,7 +14,4 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-
-
-    // Diğer controller metotları buraya eklenebilir
 }

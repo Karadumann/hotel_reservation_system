@@ -60,10 +60,8 @@ public class ReceptionistController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUsername(authentication.getName());
 
-        // Client'e otel bilgisi ekle
         client.setHotel(user.getHotel());
         Client savedClient = clientService.saveClient(client);
-        // Rezervasyon bilgilerini ayarla
         reservation.setClient(savedClient);
         reservation.setHotel(user.getHotel());
 
@@ -71,6 +69,12 @@ public class ReceptionistController {
 
         model.addAttribute("successMessage", "Reservation has been successfully added.");
         return "redirect:/receptionist/addReservation?success=true";
+    }
+
+    @GetMapping("/cancelReservation")
+    public String cancelReservationForm(Model model) {
+        model.addAttribute("reservationNumber", "");
+        return "receptionist/cancelReservation";
     }
 
     @PostMapping("/cancelReservation")
@@ -84,7 +88,7 @@ public class ReceptionistController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error cancelling reservation: " + e.getMessage());
         }
-        return "redirect:/receptionist/viewReservations";
+        return "redirect:/receptionist/cancelReservation";
     }
 
     @GetMapping("/viewReservations")

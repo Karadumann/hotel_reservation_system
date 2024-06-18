@@ -56,8 +56,8 @@
           <label for="room">Room:</label>
           <select class="form-control" id="room" th:field="*{roomNumber}">
             <option th:each="room : ${rooms}" th:value="${room.roomNumber}"
-                    th:text="${room.roomNumber + ' - ' + room.roomCategory + ' (' + (room.occupied ? 'Occupied' : 'Available') + ')'}"
-                    th:disabled="${room.occupied}"></option>
+                    th:text="${room.roomNumber + ' - ' + room.roomCategory + ' (' + room.status.name() + ')'}"
+                    th:disabled="${room.status != T(com.example.hotel_management.model.RoomStatus).AVAILABLE}"></option>
           </select>
         </div>
         <div class="form-group">

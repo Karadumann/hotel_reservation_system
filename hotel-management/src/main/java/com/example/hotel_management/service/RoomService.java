@@ -45,6 +45,7 @@ public class RoomService {
     public List<Room> getRoomsByHotelId(Integer hotelId) {
         return roomRepository.findByHotelId(hotelId);
     }
+
     @Transactional
     public Room updateRoomStatus(Integer roomId, RoomStatus status) {
         Room room = roomRepository.findById(roomId)
@@ -52,8 +53,31 @@ public class RoomService {
         room.setStatus(status);
         return roomRepository.save(room);
     }
+
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
     }
 
+    @Transactional
+    public void deleteRoom(Integer roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
+        roomRepository.delete(room);
+    }
+
+    @Transactional
+    public Room updateRoom(Room updatedRoom) {
+        Room existingRoom = roomRepository.findById(updatedRoom.getId())
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + updatedRoom.getId()));
+        existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
+        existingRoom.setRoomCategory(updatedRoom.getRoomCategory());
+        existingRoom.setStatus(updatedRoom.getStatus());
+        existingRoom.setOccupied(updatedRoom.isOccupied());
+        return roomRepository.save(existingRoom);
+    }
+
+    public Room getRoomById(Integer roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
+    }
 }
