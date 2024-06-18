@@ -3,6 +3,7 @@ package com.example.hotel_management.controller;
 import com.example.hotel_management.model.Hotel;
 import com.example.hotel_management.model.Room;
 import com.example.hotel_management.model.RoomStatus;
+import com.example.hotel_management.model.User;
 import com.example.hotel_management.repository.HotelRepository;
 import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.service.HotelService;
@@ -11,7 +12,6 @@ import com.example.hotel_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import com.example.hotel_management.model.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,13 +88,13 @@ public class AdminController {
         }
         return "redirect:/admin/manageRooms";
     }
+
     @GetMapping("/addOwner")
     public String addOwnerForm(Model model) {
         model.addAttribute("owner", new User());
         model.addAttribute("hotel", new Hotel());
         return "admin/addOwner";
     }
-
 
     @PostMapping("/addOwner")
     public String addOwnerSubmit(@ModelAttribute("owner") User owner, @ModelAttribute("hotel") Hotel hotel, Model model) {
@@ -108,5 +108,23 @@ public class AdminController {
         model.addAttribute("owner", new User());
         model.addAttribute("hotel", new Hotel());
         return "admin/addOwner";
+    }
+
+    @GetMapping("/manageUsers")
+    public String manageUsersForm(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "admin/manageUsers";
+    }
+
+    @PostMapping("/updateUserStatus")
+    public String updateUserStatus(@RequestParam("userId") Long userId, @RequestParam("active") boolean active, Model model) {
+        try {
+            userService.setUserActiveStatus(userId, active);
+            model.addAttribute("successMessage", "User status updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error updating user status: " + e.getMessage());
+        }
+        return "redirect:/admin/manageUsers";
     }
 }

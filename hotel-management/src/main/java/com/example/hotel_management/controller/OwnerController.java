@@ -27,7 +27,7 @@ public class OwnerController {
     @Autowired
     private RoomRepository roomRepository;
 
-  @Autowired
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -82,6 +82,7 @@ public class OwnerController {
         }
         return "redirect:/owner/manageRooms";
     }
+
     @PostMapping("/deleteRoom/{roomId}")
     public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
         try {
@@ -124,8 +125,8 @@ public class OwnerController {
                 throw new IllegalStateException("Hotel information is missing for the owner.");
             }
 
-            Long hotelId = owner.getHotel().getId().longValue();
-            List<User> managers = userRepository.findByHotelIdAndRoleRoleName(hotelId, "ROLE_MANAGER");
+            Integer hotelId = owner.getHotel().getId();
+            List<User> managers = userRepository.findByHotelIdAndRoleRoleName(Long.valueOf(hotelId), "ROLE_MANAGER");
             model.addAttribute("managers", managers);
             return "owner/viewManagers";
         } catch (Exception e) {
@@ -134,4 +135,25 @@ public class OwnerController {
         }
     }
 
+    @GetMapping("/manageUsers")
+    public String manageUsersForm(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        User owner = userService.findByUsername(username);
+
+        List<User> users = userService.getUsersByHotelId(owner.getHotel().getId());
+        model.addAttribute("users", users);
+        return "owner/manageUsers";
+    }
+
+    @PostMapping("/updateUserStatus")
+    public String updateUserStatus(@RequestParam("userId") Long userId, @RequestParam("active") boolean active, Model model) {
+        try {
+            userService.setUserActiveStatus(userId, active);
+            model.addAttribute("successMessage", "User status updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error updating user status: " + e.getMessage());
+        }
+        return "redirect:/owner/manageUsers";
+    }
 }

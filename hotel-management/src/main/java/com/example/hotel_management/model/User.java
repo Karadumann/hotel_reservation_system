@@ -14,6 +14,7 @@ public class User {
     private String surname;
     private String telephone;
     private String address;
+    private boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -95,5 +96,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
