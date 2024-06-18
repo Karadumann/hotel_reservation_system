@@ -34,14 +34,14 @@ public class ManageRoomsController {
     private UserRepository userRepository;
 
     @GetMapping
-    public String manageRoomsForm(@RequestParam(required = false) String hotelName, Model model) {
+    public String manageRoomsForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
         User user = userService.findByUsername(username);
 
         List<Room> rooms;
 
-        if (user.getRole().getRoleName().equals("ROLE_ADMIN")) {
+        if (user.getRole().getRoleName().equals("ROLE_ADMINISTRATOR")) {
             rooms = roomRepository.findAll();
         } else {
             rooms = roomRepository.findByHotelId(user.getHotel().getId());
@@ -58,7 +58,7 @@ public class ManageRoomsController {
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
         User user = userService.findByUsername(username);
 
-        if (!user.getRole().getRoleName().equals("ROLE_ADMIN") && !user.getHotel().getId().equals(hotelId)) {
+        if (!user.getRole().getRoleName().equals("ROLE_ADMINISTRATOR") && !user.getHotel().getId().equals(hotelId)) {
             throw new IllegalStateException("You do not have permission to add a room to this hotel.");
         }
 
@@ -85,7 +85,7 @@ public class ManageRoomsController {
         return "redirect:/manageRooms";
     }
 
-    @GetMapping("/deleteRoom/{roomId}")
+    @PostMapping("/deleteRoom/{roomId}")
     public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
@@ -94,7 +94,7 @@ public class ManageRoomsController {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
 
-        if (!user.getRole().getRoleName().equals("ROLE_ADMIN") && !room.getHotel().getId().equals(user.getHotel().getId())) {
+        if (!user.getRole().getRoleName().equals("ROLE_ADMINISTRATOR") && !room.getHotel().getId().equals(user.getHotel().getId())) {
             throw new IllegalStateException("You do not have permission to delete this room.");
         }
 

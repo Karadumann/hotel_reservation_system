@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>View Managers</title>
+    <title>Manage Rooms</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
-    <h1>View Managers</h1>
-    <table class="table">
+    <h1>Manage Rooms</h1>
+
+    <hr/>
+    <h2>Room List</h2>
+    <table class="table table-striped">
         <thead>
         <tr>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Telephone</th>
-            <th>Address</th>
+            <th>Room Number</th>
+            <th>Room Category</th>
+            <th>Status</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="manager : ${managers}">
-            <td th:text="${manager.username}"></td>
-            <td th:text="${manager.name}"></td>
-            <td th:text="${manager.surname}"></td>
-            <td th:text="${manager.telephone}"></td>
-            <td th:text="${manager.address}"></td>
+        <tr th:each="room : ${rooms}">
+            <td th:text="${room.roomNumber}">Room Number</td>
+            <td th:text="${room.roomCategory}">Room Category</td>
+            <td th:text="${room.status}">Status</td>
         </tr>
         </tbody>
     </table>
-    <a href="/owner/home" class="btn btn-secondary">Back</a>
+    <a href="/receptionist/home" class="btn btn-secondary">Back</a>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

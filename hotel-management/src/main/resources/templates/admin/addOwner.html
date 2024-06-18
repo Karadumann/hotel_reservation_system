@@ -51,9 +51,10 @@
             <label for="hotelAddress">Hotel Address:</label>
             <input type="text" class="form-control" id="hotelAddress" th:field="*{address}" required />
         </div>
+        <form th:action="@{/admin/addOwner}" method="post" th:object="${owner}">
         <button type="submit" class="btn btn-primary">Add Owner</button>
-        <a href="/admin/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
-    </form>
+        <a href="/admin/home" class="btn btn-secondary">Back</a>
+    </form></form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

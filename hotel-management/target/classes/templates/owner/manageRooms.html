@@ -2,25 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Manage Rooms</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-3">
-    <h2>Manage Rooms</h2>
+<div class="container">
+    <h1>Manage Rooms</h1>
 
-    <!-- Success and Error Messages -->
     <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <p th:text="${successMessage}"></p>
+        <span th:text="${successMessage}"></span>
     </div>
-    <div th:if="${error}" class="alert alert-danger" role="alert">
-        <p th:text="${error}"></p>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
     </div>
 
-    <!-- Room Form -->
-    <form th:action="@{/owner/manageRooms}" th:object="${newRoom}" method="post">
+    <form th:action="@{/owner/addRoom}" method="post" th:object="${newRoom}">
         <div class="form-group">
-            <label for="roomNumber">Room Number</label>
-            <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" placeholder="Enter room number">
+            <label for="roomNumber">Room Number:</label>
+            <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" required />
         </div>
         <div class="form-group">
             <label for="roomCategory">Room Category</label>
@@ -33,35 +31,19 @@
                 <option value="Family">Family</option>
                 <option value="Business">Business</option>
                 <option value="Presidential Suite">Presidential Suite</option>
-                <option value="Honeymoon">Honeymoon</option>
-                <option value="Penthouse">Penthouse</option>
-                <option value="Villa">Villa</option>
-                <option value="Bungalow">Bungalow</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Executive Suite">Executive Suite</option>
-                <option value="Ocean View Room">Ocean View Room</option>
-                <option value="Garden View Room">Garden View Room</option>
-                <option value="Poolside Room">Poolside Room</option>
-                <option value="Accessible Room">Accessible Room</option>
-                <option value="Interconnecting Room">Interconnecting Room</option>
-                <option value="Pet-Friendly Room">Pet-Friendly Room</option>
-                <option value="Smoking Room">Smoking Room</option>
-                <option value="Non-smoking Room">Non-smoking Room</option>
-                <option value="Long Stay Room">Long Stay Room</option>
-                <option value="Spa Suite">Spa Suite</option>
-
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Add Room</button>
     </form>
 
-    <!-- Room List -->
-    <h3 class="mt-4">Room List</h3>
-    <table class="table">
+    <hr/>
+    <h2>Room List</h2>
+    <table class="table table-striped">
         <thead>
         <tr>
             <th>Room Number</th>
             <th>Room Category</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -71,7 +53,7 @@
             <td th:text="${room.roomCategory}">Room Category</td>
             <td th:text="${room.status}">Status</td>
             <td>
-                <form th:action="@{/manageRooms/updateRoomStatus/{roomId}(roomId=${room.id})}" method="post">
+                <form th:action="@{/owner/updateRoomStatus/{roomId}(roomId=${room.id})}" method="post">
                     <select name="status" class="form-control">
                         <option th:each="status : ${T(com.example.hotel_management.model.RoomStatus).values()}"
                                 th:value="${status.name()}"
@@ -80,18 +62,17 @@
                     </select>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
-                <form th:action="@{/manageRooms/deleteRoom/{roomId}(roomId=${room.id})}" method="post">
+                <form th:action="@{/owner/deleteRoom/{roomId}(roomId=${room.id})}" method="post">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <a href="/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
+    <a href="/owner/home" class="btn btn-secondary">Back</a>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

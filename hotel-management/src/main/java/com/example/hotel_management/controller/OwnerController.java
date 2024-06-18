@@ -1,9 +1,8 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.Hotel;
 import com.example.hotel_management.model.Room;
+import com.example.hotel_management.model.RoomStatus;
 import com.example.hotel_management.model.User;
-import com.example.hotel_management.repository.HotelRepository;
 import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.repository.UserRepository;
 import com.example.hotel_management.service.RoomService;
@@ -21,20 +20,77 @@ import java.util.List;
 @Controller
 @RequestMapping("/owner")
 public class OwnerController {
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private UserRepository userRepository;
+
     @Autowired
     private RoomRepository roomRepository;
+
+  @Autowired
+    private UserRepository userRepository;
+
     @Autowired
-    private HotelRepository hotelRepository;
+    private UserService userService;
 
     @GetMapping("/home")
     public String ownerHome() {
         return "owner/home";
+    }
+
+    @GetMapping("/manageRooms")
+    public String manageRoomsForm(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        User user = userService.findByUsername(username);
+
+        List<Room> rooms = roomRepository.findByHotelId(user.getHotel().getId());
+
+        model.addAttribute("newRoom", new Room());
+        model.addAttribute("rooms", rooms);
+        return "owner/manageRooms";
+    }
+
+    @PostMapping("/addRoom")
+    public String addRoomSubmit(@ModelAttribute("room") Room room, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        User user = userService.findByUsername(username);
+
+        room.setHotel(user.getHotel());
+        room.setOccupied(false);
+        room.setStatus(RoomStatus.AVAILABLE);
+
+        try {
+            roomService.addRoom(room, user.getHotel().getId());
+            model.addAttribute("successMessage", "Room added successfully to Hotel: " + room.getHotel().getName());
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", "Error adding room: " + e.getMessage());
+        }
+        return "redirect:/owner/manageRooms";
+    }
+
+    @PostMapping("/updateRoomStatus/{roomId}")
+    public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
+        try {
+            Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
+            room.setStatus(status);
+            roomRepository.save(room);
+            model.addAttribute("successMessage", "Room status updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error updating room status: " + e.getMessage());
+        }
+        return "redirect:/owner/manageRooms";
+    }
+    @PostMapping("/deleteRoom/{roomId}")
+    public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
+        try {
+            roomRepository.deleteById(roomId);
+            model.addAttribute("message", "Room successfully deleted.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Error deleting the room: " + e.getMessage());
+        }
+        return "redirect:/owner/manageRooms";
     }
 
     @GetMapping("/addManager")
@@ -78,43 +134,4 @@ public class OwnerController {
         }
     }
 
-    @GetMapping("/manageRooms")
-    public String manageRoomsForm(Model model) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User owner = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
-
-        List<Room> rooms = roomService.getRoomsByHotelId(owner.getHotel().getId());
-        model.addAttribute("newRoom", new Room());
-        model.addAttribute("rooms", rooms);
-        return "owner/manageRooms";
-    }
-
-    @PostMapping("/manageRooms")
-    public String addRoomSubmit(@ModelAttribute("room") Room room, Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        User owner = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
-
-        Hotel hotel = hotelRepository.findById(owner.getHotel().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid hotel ID"));
-        room.setHotel(hotel);
-        room.setOccupied(false);
-
-        if (!roomRepository.existsByHotelIdAndRoomNumber(hotel.getId(), room.getRoomNumber())) {
-            roomRepository.save(room);
-            model.addAttribute("successMessage", "Room added successfully to your hotel.");
-        } else {
-            model.addAttribute("errorMessage", "A room with the same number already exists in this hotel.");
-        }
-        return "redirect:/owner/manageRooms";
-    }
-
-    @GetMapping("/deleteRoom/{roomId}")
-    public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
-        roomRepository.deleteById(roomId);
-        model.addAttribute("message", "Room successfully deleted.");
-        return "redirect:/owner/manageRooms";
-    }
 }

@@ -1,8 +1,9 @@
 package com.example.hotel_management.controller;
 
 import com.example.hotel_management.model.Room;
+import com.example.hotel_management.model.RoomStatus;
 import com.example.hotel_management.model.User;
-import com.example.hotel_management.repository.UserRepository;
+import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.service.RoomService;
 import com.example.hotel_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,22 +13,54 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.hotel_management.repository.UserRepository;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private RoomService roomService;
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/home")
     public String managerHome() {
         return "manager/home";
+    }
+
+    @GetMapping("/manageRooms")
+    public String manageRoomsForm(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        User user = userService.findByUsername(username);
+
+        List<Room> rooms = roomRepository.findByHotelId(user.getHotel().getId());
+
+        model.addAttribute("rooms", rooms);
+        return "manager/manageRooms";
+    }
+
+    @PostMapping("/updateRoomStatus/{roomId}")
+    public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
+        try {
+            Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
+            room.setStatus(status);
+            roomRepository.save(room);
+            model.addAttribute("successMessage", "Room status updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error updating room status: " + e.getMessage());
+        }
+        return "redirect:/manager/manageRooms";
     }
 
     @GetMapping("/addReceptionist")
@@ -40,18 +73,15 @@ public class ManagerController {
     public String addReceptionistSubmit(@ModelAttribute("receptionist") User receptionist, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-
         User manager = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
-
         try {
             userService.createReceptionist(receptionist.getUsername(), receptionist.getPassword(), manager.getHotel(), receptionist.getName(), receptionist.getSurname(), receptionist.getTelephone(), receptionist.getAddress());
             model.addAttribute("successMessage", "Receptionist added successfully!");
-            return "manager/addReceptionist";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error adding receptionist: " + e.getMessage());
-            return "manager/addReceptionist";
         }
+        return "manager/addReceptionist";
     }
 
     @GetMapping("/viewReceptionists")
@@ -75,26 +105,5 @@ public class ManagerController {
             model.addAttribute("errorMessage", "Error retrieving receptionist list: " + e.getMessage());
             return "error";
         }
-    }
-
-    @GetMapping("/details/{username}")
-    public User getUserDetails(@PathVariable String username) {
-        User user = userService.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-        return user;
-    }
-
-    @GetMapping("/manageRooms")
-    public String manageRoomsForm(Model model) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User manager = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Manager not found"));
-
-        List<Room> rooms = roomService.getRoomsByHotelId(manager.getHotel().getId());
-        model.addAttribute("newRoom", new Room());
-        model.addAttribute("rooms", rooms);
-        return "manager/manageRooms";
     }
 }

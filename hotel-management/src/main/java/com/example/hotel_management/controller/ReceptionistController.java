@@ -1,31 +1,39 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.Client;
-import com.example.hotel_management.model.Reservation;
+import com.example.hotel_management.model.Room;
 import com.example.hotel_management.model.User;
-import com.example.hotel_management.service.ClientService;
-import com.example.hotel_management.service.ReservationService;
-import com.example.hotel_management.service.RoomService;
+import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.hotel_management.model.Client;
+import com.example.hotel_management.model.Reservation;
+import com.example.hotel_management.service.ClientService;
+import com.example.hotel_management.service.ReservationService;
+import com.example.hotel_management.service.RoomService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/receptionist")
 public class ReceptionistController {
 
     @Autowired
-    private ReservationService reservationService;
+    private RoomRepository roomRepository;
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @Autowired
     private ClientService clientService;
@@ -55,7 +63,6 @@ public class ReceptionistController {
         // Client'e otel bilgisi ekle
         client.setHotel(user.getHotel());
         Client savedClient = clientService.saveClient(client);
-
         // Rezervasyon bilgilerini ayarla
         reservation.setClient(savedClient);
         reservation.setHotel(user.getHotel());
@@ -77,7 +84,6 @@ public class ReceptionistController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error cancelling reservation: " + e.getMessage());
         }
-
         return "redirect:/receptionist/viewReservations";
     }
 
@@ -87,4 +93,15 @@ public class ReceptionistController {
         return "receptionist/viewReservations";
     }
 
+    @GetMapping("/manageRooms")
+    public String manageRoomsForm(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        User user = userService.findByUsername(username);
+
+        List<Room> rooms = roomRepository.findByHotelId(user.getHotel().getId());
+
+        model.addAttribute("rooms", rooms);
+        return "receptionist/manageRooms";
+    }
 }
