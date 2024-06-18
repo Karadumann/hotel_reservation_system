@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Managers</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>View Managers</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Telephone</th>
+            <th>Address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="manager : ${managers}">
+            <td th:text="${manager.username}"></td>
+            <td th:text="${manager.name}"></td>
+            <td th:text="${manager.surname}"></td>
+            <td th:text="${manager.telephone}"></td>
+            <td th:text="${manager.address}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/owner/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

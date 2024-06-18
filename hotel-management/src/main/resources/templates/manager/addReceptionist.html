@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Receptionist</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Add Receptionist</h1>
+    <form th:action="@{/manager/addReceptionist}" method="post" th:object="${receptionist}">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}" required />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}" required />
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" required />
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
+        </div>
+        <div class="form-group">
+            <label for="telephone">Telephone:</label>
+            <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"/>
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" class="form-control" id="address" th:field="*{address}" required />
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Manager</button>
+        <a href="/manager/home" class="btn btn-secondary">Back</a> <!-- Geri butonu -->
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
