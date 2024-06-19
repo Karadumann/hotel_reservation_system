@@ -6,32 +6,35 @@ import jakarta.persistence.*;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+    private Long id;
     private String name;
     private String surname;
-    private String email;
     private String telephone;
+    private String address;
+    private String email;  // Yeni alan
     private String birthdate;
-
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    // Getters ve setters
-
-    public Integer getId() {
+    // getters and setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getName() {
         return name;
     }
-
+    public String getBirthdate() {
+        return birthdate;
+    }
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
     public void setName(String name) {
         this.name = name;
     }
@@ -44,14 +47,6 @@ public class Client {
         this.surname = surname;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getTelephone() {
         return telephone;
     }
@@ -60,12 +55,20 @@ public class Client {
         this.telephone = telephone;
     }
 
-    public String getBirthdate() {
-        return birthdate;
+    public String getAddress() {
+        return address;
     }
 
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Hotel getHotel() {

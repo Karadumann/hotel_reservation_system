@@ -3,6 +3,39 @@
 <head>
     <title>Manage Rooms</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .form-control {
+            background-color: #495057;
+            color: #fff;
+        }
+        .btn-primary, .btn-danger, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .alert {
+            color: #fff;
+        }
+        .alert-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .alert-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -21,7 +54,7 @@
             <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" required />
         </div>
         <div class="form-group">
-            <label for="roomCategory">Room Category</label>
+            <label for="roomCategory">Room Category:</label>
             <select class="form-control" id="roomCategory" th:field="*{roomCategory}">
                 <option value="Standard">Standard</option>
                 <option value="Deluxe">Deluxe</option>
@@ -45,7 +78,7 @@
 
     <hr/>
     <h2>Room List</h2>
-    <table class="table table-striped">
+    <table class="table table-striped table-dark">
         <thead>
         <tr>
             <th>Hotel</th>

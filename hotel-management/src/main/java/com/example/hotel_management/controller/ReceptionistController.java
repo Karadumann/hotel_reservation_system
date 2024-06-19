@@ -53,6 +53,7 @@ public class ReceptionistController {
         return "receptionist/addReservation";
     }
 
+
     @PostMapping("/addReservation")
     public String addReservationSubmit(@ModelAttribute("reservation") Reservation reservation,
                                        @ModelAttribute("client") Client client,

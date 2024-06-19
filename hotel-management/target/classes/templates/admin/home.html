@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <title>Admin Panel</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .btn-primary, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -11,6 +25,10 @@
         <div class="col-md-8 text-center">
             <h1 class="mb-4">Admin Panel</h1>
             <a href="/admin/addOwner" class="btn btn-primary">Add Owner</a>
+            <a href="/admin/viewUsers" class="btn btn-primary">View Users</a>
+            <a href="/admin/addReservation" class="btn btn-primary">Add Reservation</a>
+            <a href="/admin/cancelReservation" class="btn btn-primary">Cancel Reservation</a>
+            <a href="/admin/viewReservations" class="btn btn-primary">View Reservation</a>
             <a href="/admin/manageRooms" class="btn btn-primary">Manage Rooms Each Hotel</a>
             <a href="/admin/manageUsers" class="btn btn-primary">Manage Users Each Hotel</a>
             <a href="/login" class="btn btn-secondary">Go to Login page</a>

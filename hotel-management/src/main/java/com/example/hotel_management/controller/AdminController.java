@@ -1,15 +1,13 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.Hotel;
-import com.example.hotel_management.model.Room;
-import com.example.hotel_management.model.RoomStatus;
-import com.example.hotel_management.model.User;
+import com.example.hotel_management.model.*;
 import com.example.hotel_management.repository.HotelRepository;
 import com.example.hotel_management.repository.RoomRepository;
-import com.example.hotel_management.service.HotelService;
-import com.example.hotel_management.service.RoomService;
-import com.example.hotel_management.service.UserService;
+import com.example.hotel_management.repository.UserRepository;
+import com.example.hotel_management.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +22,22 @@ public class AdminController {
     private RoomService roomService;
 
     @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ReservationService reservationService;
+
+    @Autowired
     private UserService userService;
+
     @Autowired
     private HotelService hotelService;
 
     @Autowired
     private HotelRepository hotelRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private RoomRepository roomRepository;
@@ -127,4 +135,83 @@ public class AdminController {
         }
         return "redirect:/admin/manageUsers";
     }
+
+    @GetMapping("/viewUsers")
+    public String viewUsers(Model model) {
+        try {
+            List<User> managers = userRepository.findByRoleRoleName("ROLE_MANAGER");
+            List<User> owners = userRepository.findByRoleRoleName("ROLE_OWNER");
+            List<User> receptionists = userRepository.findByRoleRoleName("ROLE_RECEPTIONIST");
+
+            model.addAttribute("managers", managers);
+            model.addAttribute("owners", owners);
+            model.addAttribute("receptionists", receptionists);
+
+            return "admin/viewUsers";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error retrieving user list: " + e.getMessage());
+            return "error";
+        }
+    }
+
+    @GetMapping("/addReservation")
+    public String addReservationForm(Model model) {
+        Reservation reservation = new Reservation();
+        reservation.setClient(new Client());
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("hotels", hotelService.getAllHotels());
+        return "admin/addReservation";
+    }
+
+    @PostMapping("/addReservation")
+    public String addReservationSubmit(@ModelAttribute Reservation reservation,
+                                       @RequestParam("hotel.id") Integer hotelId,
+                                       Model model) {
+        Hotel hotel = hotelService.findById(hotelId)
+                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+        reservation.setHotel(hotel);
+
+        Client client = reservation.getClient();
+        clientService.saveClient(client);
+
+        reservationService.saveReservation(reservation);
+
+        model.addAttribute("successMessage", "Reservation has been successfully added.");
+        return "redirect:/admin/addReservation?success=true";
+    }
+
+    @GetMapping("/cancelReservation")
+    public String cancelReservationForm(Model model) {
+        model.addAttribute("reservationNumber", "");
+        return "admin/cancelReservation";
+    }
+
+    @PostMapping("/cancelReservation")
+    public String cancelReservation(@RequestParam("reservationNumber") String reservationNumber, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        try {
+            reservationService.cancelReservation(reservationNumber);
+            model.addAttribute("successMessage", "Reservation has been successfully cancelled.");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error cancelling reservation: " + e.getMessage());
+        }
+        return "redirect:/admin/cancelReservation";
+    }
+
+    @GetMapping("/viewReservations")
+    public String viewReservations(Model model) {
+        model.addAttribute("reservations", reservationService.getAllReservations());
+        return "admin/viewReservations";
+    }
+
+    @GetMapping("/getRooms")
+    @ResponseBody
+    public List<Room> getRooms(@RequestParam Integer hotelId) {
+        return roomService.getRoomsByHotelId(hotelId);
+    }
+
+
+
 }

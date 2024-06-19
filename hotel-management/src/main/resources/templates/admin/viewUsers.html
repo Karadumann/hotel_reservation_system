@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Users</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .table {
+            background-color: #495057;
+        }
+        .btn-primary, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .alert {
+            color: #fff;
+        }
+        .alert-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .alert-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>View Users</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <h2>Owners</h2>
+    <table class="table table-striped table-dark">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Hotel</th>
+            <th>Telephone</th>
+            <th>Address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="owner : ${owners}">
+            <td th:text="${owner.id}"></td>
+            <td th:text="${owner.username}"></td>
+            <td th:text="${owner.name}"></td>
+            <td th:text="${owner.surname}"></td>
+            <td th:text="${owner.hotel.name}"></td>
+            <td th:text="${owner.telephone}"></td>
+            <td th:text="${owner.address}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Managers</h2>
+    <table class="table table-striped table-dark">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Hotel</th>
+            <th>Telephone</th>
+            <th>Address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="manager : ${managers}">
+            <td th:text="${manager.id}"></td>
+            <td th:text="${manager.username}"></td>
+            <td th:text="${manager.name}"></td>
+            <td th:text="${manager.surname}"></td>
+            <td th:text="${manager.hotel.name}"></td>
+            <td th:text="${manager.telephone}"></td>
+            <td th:text="${manager.address}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Receptionists</h2>
+    <table class="table table-striped table-dark">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Hotel</th>
+            <th>Telephone</th>
+            <th>Address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="receptionist : ${receptionists}">
+            <td th:text="${receptionist.id}"></td>
+            <td th:text="${receptionist.username}"></td>
+            <td th:text="${receptionist.name}"></td>
+            <td th:text="${receptionist.surname}"></td>
+            <td th:text="${receptionist.hotel.name}"></td>
+            <td th:text="${receptionist.telephone}"></td>
+            <td th:text="${receptionist.address}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/admin/home" class="btn btn-secondary">Back</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

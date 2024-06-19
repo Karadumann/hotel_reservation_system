@@ -3,9 +3,37 @@
 <head>
     <title>Add Owner</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .form-control {
+            background-color: #495057;
+            color: #fff;
+        }
+        .btn-primary, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .alert {
+            color: #fff;
+        }
+        .alert-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .alert-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
-
 <div class="container">
     <h1 class="mt-4 mb-4">Add Owner</h1>
 
@@ -51,10 +79,9 @@
             <label for="hotelAddress">Hotel Address:</label>
             <input type="text" class="form-control" id="hotelAddress" th:field="*{address}" required />
         </div>
-        <form th:action="@{/admin/addOwner}" method="post" th:object="${owner}">
         <button type="submit" class="btn btn-primary">Add Owner</button>
         <a href="/admin/home" class="btn btn-secondary">Back</a>
-    </form></form>
+    </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

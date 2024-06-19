@@ -80,4 +80,7 @@ public class RoomService {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
     }
+
+
+
 }
