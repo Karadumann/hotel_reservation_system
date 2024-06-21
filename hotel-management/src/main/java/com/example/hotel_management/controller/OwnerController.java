@@ -1,10 +1,9 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.Room;
-import com.example.hotel_management.model.RoomStatus;
-import com.example.hotel_management.model.User;
+import com.example.hotel_management.model.*;
 import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.repository.UserRepository;
+import com.example.hotel_management.service.ComplaintService;
 import com.example.hotel_management.service.RoomService;
 import com.example.hotel_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,9 @@ public class OwnerController {
     private RoomRepository roomRepository;
 
     @Autowired
+    private ComplaintService complaintService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -37,7 +39,14 @@ public class OwnerController {
     public String ownerHome() {
         return "owner/home";
     }
-
+    @GetMapping("/viewComplaints")
+    public String viewComplaints(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        List<Client> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
+        model.addAttribute("complaints", complaints);
+        return "owner/viewComplaints";
+    }
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

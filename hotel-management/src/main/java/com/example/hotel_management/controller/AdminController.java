@@ -39,6 +39,9 @@ public class AdminController {
     private HotelRepository hotelRepository;
 
     @Autowired
+    private ComplaintService complaintService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -49,6 +52,12 @@ public class AdminController {
         return "admin/home";
     }
 
+    @GetMapping("/viewComplaints")
+    public String viewComplaints(Model model) {
+        List<Complaint> complaints = complaintService.getAllComplaints();
+        model.addAttribute("complaints", complaints);
+        return "admin/viewComplaints";
+    }
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         List<Hotel> hotels = hotelRepository.findAll();

@@ -28,6 +28,46 @@
           },
           utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
       });
+
+      var roomSelect = document.getElementById("room");
+      roomSelect.addEventListener("change", function() {
+        var roomNumber = roomSelect.value;
+        fetch(`/api/reservations/roomReservations?roomNumber=${roomNumber}`)
+            .then(response => response.json())
+            .then(data => {
+                disableUnavailableDates(data);
+            });
+      });
+
+      function disableUnavailableDates(reservations) {
+        var startDateInput = document.getElementById("startDate");
+        var endDateInput = document.getElementById("endDate");
+
+        function checkDateOverlap(date) {
+          var selectedDate = new Date(date);
+          return reservations.some(function(reservation) {
+            var resStartDate = new Date(reservation.startDate);
+            var resEndDate = new Date(reservation.endDate);
+            return (selectedDate >= resStartDate && selectedDate <= resEndDate);
+          });
+        }
+
+        startDateInput.addEventListener("change", function() {
+          if (checkDateOverlap(startDateInput.value)) {
+            alert("Selected start date overlaps with an existing reservation.");
+            startDateInput.value = "";
+          } else {
+            endDateInput.setAttribute("min", startDateInput.value);
+          }
+        });
+
+        endDateInput.addEventListener("change", function() {
+          if (checkDateOverlap(endDateInput.value)) {
+            alert("Selected end date overlaps with an existing reservation.");
+            endDateInput.value = "";
+          }
+        });
+      }
     });
   </script>
 </head>

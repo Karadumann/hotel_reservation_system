@@ -7,6 +7,7 @@ import com.example.hotel_management.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,7 +41,6 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findByReservationNumber(reservationNumber)
                 .orElseThrow(() -> new RuntimeException("Reservation not found with number: " + reservationNumber));
 
-        // Odanın durumunu güncelle
         Room room = roomRepository.findByRoomNumberAndHotelId(reservation.getRoomNumber(), reservation.getHotel().getId());
         if (room != null) {
             room.setOccupied(false);
@@ -54,5 +54,13 @@ public class ReservationService {
 
     public Reservation saveReservation(Reservation reservation) {
         return reservationRepository.save(reservation);
+    }
+
+    public List<Reservation> getReservationsByRoomNumber(String roomNumber) {
+        return reservationRepository.findByRoomNumber(roomNumber);
+    }
+
+    public List<Reservation> getReservationsByHotelId(Long hotelId) {
+        return reservationRepository.findByHotelId(hotelId);
     }
 }

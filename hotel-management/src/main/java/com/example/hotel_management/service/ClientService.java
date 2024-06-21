@@ -19,5 +19,7 @@ public class ClientService {
     public Client saveClient(Client client) {
         return clientRepository.save(client);
     }
-
+    public List<Client> getClientsByHotelId(Long hotelId) {
+        return clientRepository.findByHotelId(hotelId);
+    }
 }

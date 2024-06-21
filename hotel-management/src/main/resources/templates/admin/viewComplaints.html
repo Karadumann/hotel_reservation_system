@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Complaints</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Complaints</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Complaint ID</th>
+            <th>Client Name</th>
+            <th>Complaint</th>
+            <th>Hotel</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="complaint : ${complaints}">
+            <td th:text="${complaint.id}"></td>
+            <td th:text="${complaint.client.name} + ' ' + ${complaint.client.surname}"></td>
+            <td th:text="${complaint.complaintText}"></td>
+            <td th:text="${complaint.hotel.name}"></td>
+            <td th:text="${complaint.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/admin/home" class="btn btn-secondary">Back</a>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
