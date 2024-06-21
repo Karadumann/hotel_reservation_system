@@ -51,6 +51,7 @@ public class ReservationService {
         reservation.setCancelled(true);
         reservationRepository.save(reservation);
     }
+
     public Reservation saveReservation(Reservation reservation) {
         return reservationRepository.save(reservation);
     }

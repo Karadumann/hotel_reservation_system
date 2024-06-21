@@ -1,5 +1,6 @@
 package com.example.hotel_management.controller;
 
+import com.example.hotel_management.DTO.RoomDTO;
 import com.example.hotel_management.model.*;
 import com.example.hotel_management.repository.HotelRepository;
 import com.example.hotel_management.repository.RoomRepository;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -58,7 +60,7 @@ public class AdminController {
     }
 
     @PostMapping("/addRoom")
-    public String addRoomSubmit(@ModelAttribute("room") Room room, @RequestParam("hotelId") Integer hotelId, Model model) {
+    public String addRoomSubmit(@ModelAttribute("room") Room room, @RequestParam("hotelId") Long hotelId, Model model) {
         try {
             Hotel hotel = hotelRepository.findById(hotelId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid hotel ID: " + hotelId));
@@ -74,7 +76,7 @@ public class AdminController {
     }
 
     @PostMapping("/deleteRoom/{roomId}")
-    public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
+    public String deleteRoom(@PathVariable("roomId") Long roomId, Model model) {
         try {
             roomRepository.deleteById(roomId);
             model.addAttribute("message", "Room successfully deleted.");
@@ -85,7 +87,7 @@ public class AdminController {
     }
 
     @PostMapping("/updateRoomStatus/{roomId}")
-    public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
+    public String updateRoomStatus(@PathVariable("roomId") Long roomId, @RequestParam RoomStatus status, Model model) {
         try {
             Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
             room.setStatus(status);
@@ -155,29 +157,36 @@ public class AdminController {
     }
 
     @GetMapping("/addReservation")
-    public String addReservationForm(Model model) {
-        Reservation reservation = new Reservation();
-        reservation.setClient(new Client());
-        model.addAttribute("reservation", reservation);
+    public String adminAddReservationForm(Model model) {
+        model.addAttribute("reservation", new Reservation());
+        model.addAttribute("client", new Client());
+        model.addAttribute("rooms", roomService.getAllRooms());
         model.addAttribute("hotels", hotelService.getAllHotels());
         return "admin/addReservation";
     }
 
     @PostMapping("/addReservation")
-    public String addReservationSubmit(@ModelAttribute Reservation reservation,
-                                       @RequestParam("hotel.id") Integer hotelId,
-                                       Model model) {
-        Hotel hotel = hotelService.findById(hotelId)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-        reservation.setHotel(hotel);
+    public String adminAddReservationSubmit(@ModelAttribute("reservation") Reservation reservation,
+                                            @ModelAttribute("client") Client client,
+                                            @RequestParam("hotelId") Long hotelId,
+                                            Model model) {
+        try {
+            Hotel hotel = hotelService.findById(hotelId)
+                    .orElseThrow(() -> new RuntimeException("Hotel not found"));
 
-        Client client = reservation.getClient();
-        clientService.saveClient(client);
+            client.setHotel(hotel);
+            Client savedClient = clientService.saveClient(client);
+            reservation.setClient(savedClient);
+            reservation.setHotel(hotel);
 
-        reservationService.saveReservation(reservation);
+            reservationService.createReservation(reservation);
 
-        model.addAttribute("successMessage", "Reservation has been successfully added.");
-        return "redirect:/admin/addReservation?success=true";
+            model.addAttribute("successMessage", "Reservation has been successfully added.");
+            return "redirect:/admin/addReservation?success=true";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error adding reservation: " + e.getMessage());
+            return "admin/addReservation";
+        }
     }
 
     @GetMapping("/cancelReservation")
@@ -197,7 +206,7 @@ public class AdminController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error cancelling reservation: " + e.getMessage());
         }
-        return "redirect:/admin/cancelReservation";
+        return "redirect:/admin/viewReservations";
     }
 
     @GetMapping("/viewReservations")
@@ -208,10 +217,7 @@ public class AdminController {
 
     @GetMapping("/getRooms")
     @ResponseBody
-    public List<Room> getRooms(@RequestParam Integer hotelId) {
+    public List<RoomDTO> getRooms(@RequestParam Long hotelId) {
         return roomService.getRoomsByHotelId(hotelId);
     }
-
-
-
 }

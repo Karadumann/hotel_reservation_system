@@ -66,8 +66,8 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
-    public List<User> getUsersByHotelId(Integer hotelId) {
-        return userRepository.findByHotelId(Long.valueOf(hotelId));
+    public List<User> getUsersByHotelId(Long hotelId) {
+        return userRepository.findByHotelId(hotelId);
     }
 
     public void setUserActiveStatus(Long userId, boolean active) {

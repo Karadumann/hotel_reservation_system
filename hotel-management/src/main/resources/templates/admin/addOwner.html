@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Add Owner</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <style>
         body {
-            background-color: #343a40;
-            color: #fff;
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
         }
-        .form-control {
-            background-color: #495057;
-            color: #fff;
-        }
-        .btn-primary, .btn-secondary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
+        .form-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            left: 240px;
+            max-width: 600px;
+            position: relative;
         }
         .alert {
             color: #fff;
@@ -32,56 +36,81 @@
             border-color: #dc3545;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var input = document.querySelector("#telephone");
+            window.intlTelInput(input, {
+                initialCountry: "auto",
+                geoIpLookup: function(success, failure) {
+                    fetch('https://ipinfo.io?token=free') // Using the free token for geolocation
+                        .then(function(resp) {
+                            return resp.json();
+                        })
+                        .then(function(resp) {
+                            var countryCode = (resp && resp.country) ? resp.country : "us";
+                            success(countryCode);
+                        })
+                        .catch(function() {
+                            success("us");
+                        });
+                },
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-4 mb-4">Add Owner</h1>
+    <div class="form-container">
+        <h1 class="text-center mb-4">Add Owner</h1>
 
-    <!-- Başarı mesajı -->
-    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <span th:text="${successMessage}"></span>
-    </div>
-    <!-- Hata mesajı -->
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <span th:text="${errorMessage}"></span>
-    </div>
 
-    <form th:action="@{/admin/addOwner}" method="post" th:object="${owner}">
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username" th:field="*{username}" required />
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
         </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" required />
+
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
         </div>
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" th:field="*{name}" required />
-        </div>
-        <div class="form-group">
-            <label for="surname">Surname:</label>
-            <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
-        </div>
-        <div class="form-group">
-            <label for="telephone">Telephone:</label>
-            <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"/>
-        </div>
-        <div class="form-group">
-            <label for="address">Personal Address:</label>
-            <input type="text" class="form-control" id="address" th:field="*{address}" required />
-        </div>
-        <div class="form-group" th:object="${hotel}">
-            <label for="hotelName">Hotel Name:</label>
-            <input type="text" class="form-control" id="hotelName" th:field="*{name}" required />
-        </div>
-        <div class="form-group" th:object="${hotel}">
-            <label for="hotelAddress">Hotel Address:</label>
-            <input type="text" class="form-control" id="hotelAddress" th:field="*{address}" required />
-        </div>
-        <button type="submit" class="btn btn-primary">Add Owner</button>
-        <a href="/admin/home" class="btn btn-secondary">Back</a>
-    </form>
+
+        <form th:action="@{/admin/addOwner}" method="post" th:object="${owner}">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" required />
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}" required />
+            </div>
+            <div class="form-group">
+                <label for="surname">Surname:</label>
+                <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
+            </div>
+            <div class="form-group">
+                <label for="telephone">Telephone:</label>
+                <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required />
+            </div>
+            <div class="form-group">
+                <label for="address">Personal Address:</label>
+                <input type="text" class="form-control" id="address" th:field="*{address}" required />
+            </div>
+            <div class="form-group" th:object="${hotel}">
+                <label for="hotelName">Hotel Name:</label>
+                <input type="text" class="form-control" id="hotelName" th:field="*{name}" required />
+            </div>
+            <div class="form-group" th:object="${hotel}">
+                <label for="hotelAddress">Hotel Address:</label>
+                <input type="text" class="form-control" id="hotelAddress" th:field="*{address}" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Owner</button>
+            <a href="/admin/home" class="btn btn-secondary btn-block">Back</a>
+        </form>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

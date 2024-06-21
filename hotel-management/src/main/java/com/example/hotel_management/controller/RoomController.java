@@ -15,6 +15,6 @@ public class RoomController {
     @PostMapping("/{roomId}/status")
     public Room updateRoomStatus(@PathVariable Integer roomId, @RequestParam("status") String status) {
         RoomStatus roomStatus = RoomStatus.valueOf(status.toUpperCase());
-        return roomService.updateRoomStatus(roomId, roomStatus);
+        return roomService.updateRoomStatus(Long.valueOf(roomId), roomStatus);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.hotel_management.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -8,7 +9,7 @@ import java.util.Set;
 public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;  // or Long id;
+    private Long id;
 
     private String name;
     private String address;
@@ -17,15 +18,16 @@ public class Hotel {
     private Set<Client> clients;
 
     @OneToMany(mappedBy = "hotel")
+    @JsonManagedReference
     private Set<Room> rooms;
 
     // Getters ve setters
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {  // Long türüne çevrildi
         this.id = id;
     }
 

@@ -64,7 +64,7 @@ public class ManageRoomsController {
 
         try {
             room.setHotel(user.getHotel());
-            roomService.addRoom(room, hotelId);
+            roomService.addRoom(room, Long.valueOf(hotelId));
             model.addAttribute("successMessage", "Room added successfully to Hotel: " + room.getHotel().getName());
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
@@ -75,7 +75,7 @@ public class ManageRoomsController {
     @PostMapping("/updateRoomStatus/{roomId}")
     public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
         try {
-            Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
+            Room room = roomRepository.findById(Long.valueOf(roomId)).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
             room.setStatus(status);
             roomRepository.save(room);
             model.addAttribute("successMessage", "Room status updated successfully.");
@@ -91,7 +91,7 @@ public class ManageRoomsController {
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
         User user = userService.findByUsername(username);
 
-        Room room = roomRepository.findById(roomId)
+        Room room = roomRepository.findById(Long.valueOf(roomId))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
 
         if (!user.getRole().getRoleName().equals("ROLE_ADMINISTRATOR") && !room.getHotel().getId().equals(user.getHotel().getId())) {
@@ -99,7 +99,7 @@ public class ManageRoomsController {
         }
 
         try {
-            roomRepository.deleteById(roomId);
+            roomRepository.deleteById(Long.valueOf(roomId));
             model.addAttribute("message", "Room successfully deleted.");
         } catch (Exception e) {
             model.addAttribute("error", "Error deleting the room: " + e.getMessage());

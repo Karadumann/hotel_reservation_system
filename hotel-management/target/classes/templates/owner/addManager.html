@@ -3,6 +3,59 @@
 <head>
     <title>Add Manager</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .form-control {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+        .btn-primary, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .alert {
+            color: #343a40;
+        }
+        .alert-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .alert-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var input = document.querySelector("#telephone");
+            window.intlTelInput(input, {
+                initialCountry: "auto",
+                geoIpLookup: function(success, failure) {
+                    fetch('https://ipinfo.io?token=free') // Using the free token for geolocation
+                        .then(function(resp) {
+                            return resp.json();
+                        })
+                        .then(function(resp) {
+                            var countryCode = (resp && resp.country) ? resp.country : "us";
+                            success(countryCode);
+                        })
+                        .catch(function() {
+                            success("us");
+                        });
+                },
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+        });
+    </script>
 </head>
 <body>
 
@@ -37,7 +90,7 @@
         </div>
         <div class="form-group">
             <label for="telephone">Telephone:</label>
-            <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"/>
+            <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required />
         </div>
         <div class="form-group">
             <label for="address">Personal Address:</label>

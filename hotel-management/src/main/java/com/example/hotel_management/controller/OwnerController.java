@@ -71,7 +71,7 @@ public class OwnerController {
     }
 
     @PostMapping("/updateRoomStatus/{roomId}")
-    public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
+    public String updateRoomStatus(@PathVariable("roomId") Long roomId, @RequestParam RoomStatus status, Model model) {
         try {
             Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
             room.setStatus(status);
@@ -84,7 +84,7 @@ public class OwnerController {
     }
 
     @PostMapping("/deleteRoom/{roomId}")
-    public String deleteRoom(@PathVariable("roomId") Integer roomId, Model model) {
+    public String deleteRoom(@PathVariable("roomId") Long roomId, Model model) {
         try {
             roomRepository.deleteById(roomId);
             model.addAttribute("message", "Room successfully deleted.");
@@ -125,8 +125,8 @@ public class OwnerController {
                 throw new IllegalStateException("Hotel information is missing for the owner.");
             }
 
-            Integer hotelId = owner.getHotel().getId();
-            List<User> managers = userRepository.findByHotelIdAndRoleRoleName(Long.valueOf(hotelId), "ROLE_MANAGER");
+            Long hotelId = owner.getHotel().getId();
+            List<User> managers = userRepository.findByHotelIdAndRoleRoleName(hotelId, "ROLE_MANAGER");
             model.addAttribute("managers", managers);
             return "owner/viewManagers";
         } catch (Exception e) {

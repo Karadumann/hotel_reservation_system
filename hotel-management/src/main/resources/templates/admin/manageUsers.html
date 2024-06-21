@@ -7,10 +7,12 @@
         body {
             background-color: #343a40;
             color: #fff;
+            padding-top: 20px; /* Added padding-top for better spacing */
         }
         .btn-primary, .btn-success, .btn-danger, .btn-secondary {
             background-color: #007bff;
             border-color: #007bff;
+            color: #fff;
         }
         .btn-success {
             background-color: #28a745;
@@ -35,21 +37,31 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
+        .table {
+            background-color: #495057; /* Darken the table background for better contrast */
+            color: #fff;
+        }
+        .table th, .table td {
+            vertical-align: middle; /* Center-align content vertically in table cells */
+        }
+        .table th {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Manage Users</h1>
+    <h1 class="text-center">Manage Users</h1>
 
-    <!-- Başarı mesajı -->
+    <!-- Success and Error Messages -->
     <div th:if="${successMessage}" class="alert alert-success" role="alert">
         <span th:text="${successMessage}"></span>
     </div>
-    <!-- Hata mesajı -->
     <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
         <span th:text="${errorMessage}"></span>
     </div>
 
+    <!-- User Table -->
     <table class="table table-striped table-dark">
         <thead>
         <tr>
@@ -76,17 +88,20 @@
                 <form th:action="@{/admin/updateUserStatus}" method="post">
                     <input type="hidden" name="userId" th:value="${user.id}" />
                     <input type="hidden" name="active" th:value="${!user.active}" />
-                    <button type="submit" class="btn btn-sm" th:classappend="${user.active ? 'btn-danger' : 'btn-success'}"
+                    <button type="submit" class="btn btn-sm"
+                            th:classappend="${user.active} ? 'btn-danger' : 'btn-success'"
                             th:text="${user.active ? 'Deactivate' : 'Activate'}"></button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <a href="/admin/home" class="btn btn-secondary">Back</a>
 
+
+    <a href="/admin/home" class="btn btn-secondary">Back</a>
 </div>
 
+<!-- JavaScript dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -51,7 +51,7 @@ public class ManagerController {
     }
 
     @PostMapping("/updateRoomStatus/{roomId}")
-    public String updateRoomStatus(@PathVariable("roomId") Integer roomId, @RequestParam RoomStatus status, Model model) {
+    public String updateRoomStatus(@PathVariable("roomId") Long roomId, @RequestParam RoomStatus status, Model model) { // Long türüne çevrildi
         try {
             Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
             room.setStatus(status);
@@ -97,7 +97,7 @@ public class ManagerController {
                 throw new IllegalStateException("Hotel information is missing for the manager.");
             }
 
-            Long hotelId = manager.getHotel().getId().longValue();
+            Long hotelId = manager.getHotel().getId();
             List<User> receptionists = userRepository.findByHotelIdAndRoleRoleName(hotelId, "ROLE_RECEPTIONIST");
             model.addAttribute("receptionists", receptionists);
             return "manager/viewReceptionists";

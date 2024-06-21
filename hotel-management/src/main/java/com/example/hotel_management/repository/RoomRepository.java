@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, Integer> {
-    Room findByRoomNumberAndHotelId(String roomNumber, Integer hotelId);
-    List<Room> findByHotelId(Integer hotelId);
+public interface RoomRepository extends JpaRepository<Room, Long> {
+    Room findByRoomNumberAndHotelId(String roomNumber, Long hotelId);
+    List<Room> findByHotelId(Long hotelId);
     List<Room> findByHotelName(String hotelName);
-    boolean existsByHotelIdAndRoomNumber(Integer hotelId, String roomNumber);
+    boolean existsByHotelIdAndRoomNumber(Long hotelId, String roomNumber);
 }

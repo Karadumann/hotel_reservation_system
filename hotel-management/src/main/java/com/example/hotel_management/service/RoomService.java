@@ -1,15 +1,17 @@
 package com.example.hotel_management.service;
 
+import com.example.hotel_management.DTO.RoomDTO;
 import com.example.hotel_management.model.Hotel;
 import com.example.hotel_management.model.Room;
 import com.example.hotel_management.model.RoomStatus;
 import com.example.hotel_management.repository.HotelRepository;
 import com.example.hotel_management.repository.RoomRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -19,18 +21,8 @@ public class RoomService {
     @Autowired
     private HotelRepository hotelRepository;
 
-    @Transactional  // İşlemi transactional yapın
-    public Room addRoom(Room room, Hotel hotel) {
-        if (hotel.getId() == null) {
-            hotel = hotelRepository.save(hotel);
-        }
-        room.setHotel(hotel);
-        return roomRepository.save(room);
-    }
-
     @Transactional
-    public Room addRoom(Room room, Integer hotelId) {
-        // Otel id ve oda numarasına göre varlık kontrolü
+    public Room addRoom(Room room, Long hotelId) {
         if (roomRepository.existsByHotelIdAndRoomNumber(hotelId, room.getRoomNumber())) {
             throw new IllegalStateException("Room already exists in this hotel with the same number.");
         }
@@ -42,24 +34,41 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
-    public List<Room> getRoomsByHotelId(Integer hotelId) {
-        return roomRepository.findByHotelId(hotelId);
+    public List<RoomDTO> getRoomsByHotelId(Long hotelId) {
+        return roomRepository.findByHotelId(hotelId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private RoomDTO convertToDto(Room room) {
+        RoomDTO dto = new RoomDTO();
+        dto.setId(room.getId());
+        dto.setRoomNumber(room.getRoomNumber());
+        dto.setRoomCategory(room.getRoomCategory());
+        dto.setStatus(room.getStatus());
+        return dto;
     }
 
     @Transactional
-    public Room updateRoomStatus(Integer roomId, RoomStatus status) {
+    public Room updateRoomStatus(Long roomId, RoomStatus status) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
         room.setStatus(status);
         return roomRepository.save(room);
     }
 
-    public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+    public List<Room> getRoomsByHotelIdAsEntity(Long hotelId) {
+        return roomRepository.findByHotelId(hotelId);
+    }
+
+    public List<RoomDTO> getAllRooms() {
+        return roomRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public void deleteRoom(Integer roomId) {
+    public void deleteRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
         roomRepository.delete(room);
@@ -75,12 +84,4 @@ public class RoomService {
         existingRoom.setOccupied(updatedRoom.isOccupied());
         return roomRepository.save(existingRoom);
     }
-
-    public Room getRoomById(Integer roomId) {
-        return roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
-    }
-
-
-
 }

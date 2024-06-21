@@ -1,8 +1,11 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.Room;
-import com.example.hotel_management.model.User;
+import com.example.hotel_management.DTO.RoomStatusUpdateRequest;
+import com.example.hotel_management.model.*;
 import com.example.hotel_management.repository.RoomRepository;
+import com.example.hotel_management.service.ClientService;
+import com.example.hotel_management.service.ReservationService;
+import com.example.hotel_management.service.RoomService;
 import com.example.hotel_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -11,13 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.example.hotel_management.model.Client;
-import com.example.hotel_management.model.Reservation;
-import com.example.hotel_management.service.ClientService;
-import com.example.hotel_management.service.ReservationService;
-import com.example.hotel_management.service.RoomService;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/receptionist")
@@ -31,8 +31,7 @@ public class ReceptionistController {
 
     @Autowired
     private RoomService roomService;
-
-    @Autowired
+   @Autowired
     private ReservationService reservationService;
 
     @Autowired
@@ -53,7 +52,6 @@ public class ReceptionistController {
         return "receptionist/addReservation";
     }
 
-
     @PostMapping("/addReservation")
     public String addReservationSubmit(@ModelAttribute("reservation") Reservation reservation,
                                        @ModelAttribute("client") Client client,
@@ -66,10 +64,14 @@ public class ReceptionistController {
         reservation.setClient(savedClient);
         reservation.setHotel(user.getHotel());
 
-        reservationService.createReservation(reservation);
-
-        model.addAttribute("successMessage", "Reservation has been successfully added.");
-        return "redirect:/receptionist/addReservation?success=true";
+        try {
+            reservationService.createReservation(reservation);
+            model.addAttribute("successMessage", "Reservation has been successfully added.");
+            return "redirect:/receptionist/addReservation?success=true";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error adding reservation: " + e.getMessage());
+            return "receptionist/addReservation";
+        }
     }
 
     @GetMapping("/cancelReservation")
@@ -101,12 +103,17 @@ public class ReceptionistController {
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        User user = userService.findByUsername(username);
+        User user = userService.findByUsername(auth.getName());
 
         List<Room> rooms = roomRepository.findByHotelId(user.getHotel().getId());
-
         model.addAttribute("rooms", rooms);
         return "receptionist/manageRooms";
+    }
+
+
+    private Long getCurrentUserHotelId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        return user.getHotel().getId();
     }
 }

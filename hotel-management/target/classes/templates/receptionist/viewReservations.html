@@ -21,6 +21,7 @@
   <table class="table table-striped">
     <thead>
     <tr>
+      <th>Hotel Name</th>
       <th>Reservation Number</th>
       <th>Client Name</th>
       <th>Room Number</th>
@@ -32,6 +33,7 @@
     </thead>
     <tbody>
     <tr th:each="reservation : ${reservations}">
+      <td th:text="${reservation.hotel.name}"></td>
       <td th:text="${reservation.reservationNumber}"></td>
       <td th:text="${reservation.client.name + ' ' + reservation.client.surname}"></td>
       <td th:text="${reservation.roomNumber}"></td>
