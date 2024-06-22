@@ -41,7 +41,7 @@ public class ComplaintService {
         return complaintRepository.findAll();
     }
 
-    public List<Client> getComplaintsByHotelId(Long hotelId) {
+    public List<Complaint> getComplaintsByHotelId(Long hotelId) {
         return complaintRepository.findByHotelId(hotelId);
     }
 }

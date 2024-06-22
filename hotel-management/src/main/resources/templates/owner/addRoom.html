@@ -3,23 +3,110 @@
 <head>
     <title>Add Room</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+        }
+        .form-control {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #343a40;
+            padding: 20px;
+            overflow-y: auto;
+            margin-left: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            text-align: center;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>Add Room to Your Hotel</h1>
-    <form th:action="@{/owner/addRoom}" th:object="${room}" method="post">
-        <div class="form-group">
-            <label>Room Number</label>
-            <input type="text" th:field="*{roomNumber}" class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label>Room Category</label>
-            <input type="text" th:field="*{roomCategory}" class="form-control"/>
-        </div>
-        <input type="hidden" th:field="*{hotel.id}" th:value="${hotel.id}"/>
-        <button type="submit" class="btn btn-primary">Add Room</button>
-    </form>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="sidebar">
+    <h1>Owner Panel</h1>
+    <a href="/owner/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/owner/addManager" class="btn btn-primary btn-block">Add Manager</a>
+    <a href="/owner/viewManagers" class="btn btn-primary btn-block">View Manager</a>
+    <a href="/owner/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/owner/manageRooms" class="btn btn-primary btn-block">Manage Rooms</a>
+    <a href="/owner/manageUsers" class="btn btn-primary btn-block">Manage Users</a>
+    <a href="/login" class="btn btn-secondary btn-block">Go to Login page</a>
 </div>
+<div class="content">
+    <div class="dashboard">
+        <h2>Add Room to Your Hotel</h2>
+        <form th:action="@{/owner/addRoom}" th:object="${room}" method="post">
+            <div class="form-group">
+                <label>Room Number</label>
+                <input type="text" th:field="*{roomNumber}" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Room Category</label>
+                <input type="text" th:field="*{roomCategory}" class="form-control" required />
+            </div>
+            <input type="hidden" th:field="*{hotel.id}" th:value="${hotel.id}" />
+            <button type="submit" class="btn btn-primary">Add Room</button>
+            <a href="/owner/home" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

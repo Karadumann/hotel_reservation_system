@@ -3,15 +3,48 @@
 <head>
     <title>View Users</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             background-color: #343a40;
             color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
             margin: 0;
+            display: flex;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px; /* Sidebar width */
+            position: relative;
+            min-height: 100vh;
         }
         .container {
             background-color: #495057;
@@ -19,14 +52,19 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             max-width: 1200px;
-            width: 100%;
+            margin: auto;
         }
-        .table {
+        .form-control {
             background-color: #495057;
+            color: #fff;
         }
-        .btn-primary {
+        .btn-primary, .btn-danger, .btn-secondary {
             background-color: #007bff;
             border-color: #007bff;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
         }
         .btn-secondary {
             background-color: #6c757d;
@@ -43,95 +81,130 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
+        .table {
+            background-color: #495057; /* Darken the table background for better contrast */
+            color: #fff;
+        }
+        .table th, .table td {
+            vertical-align: middle; /* Center-align content vertically in table cells */
+        }
+        .table th {
+            font-weight: bold;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="text-center">View Users</h1>
+<div class="sidebar">
+    <h1>Admin Panel</h1>
+    <a href="/admin/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/admin/addOwner" class="btn btn-primary btn-block">Add Owner</a>
+    <a href="/admin/addReservation" class="btn btn-primary btn-block">Add Reservation</a>
+    <a href="/admin/cancelReservation" class="btn btn-primary btn-block">Cancel Reservation</a>
+    <a href="/admin/viewUsers" class="btn btn-primary btn-block">View Users</a>
+    <a href="/admin/viewReservations" class="btn btn-primary btn-block">View Reservation</a>
+    <a href="/admin/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/admin/manageRooms" class="btn btn-primary btn-block">Manage Rooms Each Hotel</a>
+    <a href="/admin/manageUsers" class="btn btn-primary btn-block">Manage Users Each Hotel</a>
+</div>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="content">
+    <div class="container">
+        <h1 class="text-center">View Users</h1>
 
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <span th:text="${errorMessage}"></span>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <h2 class="mt-4">Owners</h2>
+        <table class="table table-striped table-dark table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Hotel</th>
+                <th>Telephone</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="owner : ${owners}">
+                <td th:text="${owner.id}"></td>
+                <td th:text="${owner.username}"></td>
+                <td th:text="${owner.name}"></td>
+                <td th:text="${owner.surname}"></td>
+                <td th:text="${owner.hotel.name}"></td>
+                <td th:text="${owner.telephone}"></td>
+                <td th:text="${owner.address}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2 class="mt-4">Managers</h2>
+        <table class="table table-striped table-dark table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Hotel</th>
+                <th>Telephone</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="manager : ${managers}">
+                <td th:text="${manager.id}"></td>
+                <td th:text="${manager.username}"></td>
+                <td th:text="${manager.name}"></td>
+                <td th:text="${manager.surname}"></td>
+                <td th:text="${manager.hotel.name}"></td>
+                <td th:text="${manager.telephone}"></td>
+                <td th:text="${manager.address}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2 class="mt-4">Receptionists</h2>
+        <table class="table table-striped table-dark table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Hotel</th>
+                <th>Telephone</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="receptionist : ${receptionists}">
+                <td th:text="${receptionist.id}"></td>
+                <td th:text="${receptionist.username}"></td>
+                <td th:text="${receptionist.name}"></td>
+                <td th:text="${receptionist.surname}"></td>
+                <td th:text="${receptionist.hotel.name}"></td>
+                <td th:text="${receptionist.telephone}"></td>
+                <td th:text="${receptionist.address}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a href="/admin/home" class="btn btn-secondary btn-block mt-4">Back</a>
     </div>
-
-    <h2 class="mt-4">Owners</h2>
-    <table class="table table-striped table-dark table-hover">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Hotel</th>
-            <th>Telephone</th>
-            <th>Address</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="owner : ${owners}">
-            <td th:text="${owner.id}"></td>
-            <td th:text="${owner.username}"></td>
-            <td th:text="${owner.name}"></td>
-            <td th:text="${owner.surname}"></td>
-            <td th:text="${owner.hotel.name}"></td>
-            <td th:text="${owner.telephone}"></td>
-            <td th:text="${owner.address}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <h2 class="mt-4">Managers</h2>
-    <table class="table table-striped table-dark table-hover">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Hotel</th>
-            <th>Telephone</th>
-            <th>Address</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="manager : ${managers}">
-            <td th:text="${manager.id}"></td>
-            <td th:text="${manager.username}"></td>
-            <td th:text="${manager.name}"></td>
-            <td th:text="${manager.surname}"></td>
-            <td th:text="${manager.hotel.name}"></td>
-            <td th:text="${manager.telephone}"></td>
-            <td th:text="${manager.address}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <h2 class="mt-4">Receptionists</h2>
-    <table class="table table-striped table-dark table-hover">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Hotel</th>
-            <th>Telephone</th>
-            <th>Address</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="receptionist : ${receptionists}">
-            <td th:text="${receptionist.id}"></td>
-            <td th:text="${receptionist.username}"></td>
-            <td th:text="${receptionist.name}"></td>
-            <td th:text="${receptionist.surname}"></td>
-            <td th:text="${receptionist.hotel.name}"></td>
-            <td th:text="${receptionist.telephone}"></td>
-            <td th:text="${receptionist.address}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <a href="/admin/home" class="btn btn-secondary btn-block mt-4">Back</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

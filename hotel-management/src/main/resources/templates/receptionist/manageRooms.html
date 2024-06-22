@@ -74,7 +74,7 @@
                 data: JSON.stringify({ status: status }),
                 success: function(response) {
                     alert('Room status updated successfully');
-                    $currentStatus.text(status); // Update the current status text
+                    $currentStatus.text(status);
                     $currentStatus.removeClass().addClass('current-status status-' + status);
                 },
                 error: function(error) {

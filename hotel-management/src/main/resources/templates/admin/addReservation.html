@@ -5,14 +5,50 @@
     <title>Add Reservation</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
-            height: 135vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #343a40;
             margin: 0;
+            display: flex;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px; /* Sidebar width */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
         }
         .form-container {
             background: #fff;
@@ -32,6 +68,16 @@
         .alert-danger {
             background-color: #dc3545;
             border-color: #dc3545;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #343a40;
+            font-size: 24px;
+            cursor: pointer;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -74,74 +120,89 @@
     </script>
 </head>
 <body>
-<div class="form-container">
-    <h1 class="text-center mb-4">Add Reservation</h1>
+<div class="sidebar">
+    <h1>Admin Panel</h1>
+    <a href="/admin/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/admin/addOwner" class="btn btn-primary btn-block">Add Owner</a>
+    <a href="/admin/addReservation" class="btn btn-primary btn-block">Add Reservation</a>
+    <a href="/admin/cancelReservation" class="btn btn-primary btn-block">Cancel Reservation</a>
+    <a href="/admin/viewUsers" class="btn btn-primary btn-block">View Users</a>
+    <a href="/admin/viewReservations" class="btn btn-primary btn-block">View Reservation</a>
+    <a href="/admin/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/admin/manageRooms" class="btn btn-primary btn-block">Manage Rooms Each Hotel</a>
+    <a href="/admin/manageUsers" class="btn btn-primary btn-block">Manage Users Each Hotel</a>
+</div>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="content">
+    <div class="form-container">
+        <h1 class="text-center mb-4">Add Reservation</h1>
 
-    <div th:if="${param.success}" class="alert alert-success" role="alert">
-        Reservation has been successfully added.
+        <div th:if="${param.success}" class="alert alert-success" role="alert">
+            Reservation has been successfully added.
+        </div>
+
+        <form th:action="@{/admin/addReservation}" method="post">
+            <fieldset>
+                <legend>Client Information</legend>
+                <div th:object="${client}">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Surname:</label>
+                        <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone">Telephone:</label>
+                        <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" class="form-control" id="address" th:field="*{address}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Birthdate:</label>
+                        <input type="date" class="form-control" id="birthdate" th:field="*{birthdate}" required />
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Reservation Information</legend>
+                <div th:object="${reservation}">
+                    <div class="form-group">
+                        <label for="hotel">Hotel:</label>
+                        <select class="form-control" id="hotel" name="hotelId" required onchange="loadRooms()">
+                            <option value="" disabled selected>Select a Hotel</option>
+                            <option th:each="hotel : ${hotels}" th:value="${hotel.id}" th:text="${hotel.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="room">Room:</label>
+                        <select class="form-control" id="room" th:field="*{roomNumber}">
+                            <option value="" disabled selected>Select a Room</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required />
+                    </div>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary btn-block">Add Reservation</button>
+            <a href="/admin/home" class="btn btn-secondary btn-block">Back</a>
+        </form>
     </div>
-
-    <form th:action="@{/admin/addReservation}" method="post">
-        <fieldset>
-            <legend>Client Information</legend>
-            <div th:object="${client}">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" th:field="*{name}" required />
-                </div>
-                <div class="form-group">
-                    <label for="surname">Surname:</label>
-                    <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
-                </div>
-                <div class="form-group">
-                    <label for="telephone">Telephone:</label>
-                    <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" required />
-                </div>
-                <div class="form-group">
-                    <label for="address">Address:</label>
-                    <input type="text" class="form-control" id="address" th:field="*{address}" required />
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}" required />
-                </div>
-                <div class="form-group">
-                    <label for="birthdate">Birthdate:</label>
-                    <input type="date" class="form-control" id="birthdate" th:field="*{birthdate}" required />
-                </div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend>Reservation Information</legend>
-            <div th:object="${reservation}">
-                <div class="form-group">
-                    <label for="hotel">Hotel:</label>
-                    <select class="form-control" id="hotel" name="hotelId" required onchange="loadRooms()">
-                        <option value="" disabled selected>Select a Hotel</option>
-                        <option th:each="hotel : ${hotels}" th:value="${hotel.id}" th:text="${hotel.name}"></option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="room">Room:</label>
-                    <select class="form-control" id="room" th:field="*{roomNumber}">
-                        <option value="" disabled selected>Select a Room</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required />
-                </div>
-                <div class="form-group">
-                    <label for="endDate">End Date:</label>
-                    <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required />
-                </div>
-            </div>
-        </fieldset>
-
-        <button type="submit" class="btn btn-primary btn-block">Add Reservation</button>
-        <a href="/admin/home" class="btn btn-secondary btn-block">Back</a>
-    </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

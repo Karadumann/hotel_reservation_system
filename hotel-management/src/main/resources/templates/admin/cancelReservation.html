@@ -1,23 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Cancel Reservation</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             background-color: #343a40;
             color: #fff;
+            margin: 0;
+            display: flex;
         }
-        .container {
-            margin-top: 50px;
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
         }
-        .btn-primary, .btn-secondary {
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
             background-color: #007bff;
-            border-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
         }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px; /* Sidebar width */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 100vh;
+        }
+        .form-container {
+            background: #495057;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
         }
         .alert-success {
             background-color: #28a745;
@@ -27,31 +66,60 @@
             background-color: #dc3545;
             border-color: #dc3545;
         }
-        .form-control {
-            background-color: #495057;
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
             color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .btn-primary, .btn-secondary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Cancel Reservation</h1>
+<div class="sidebar">
+    <h1>Admin Panel</h1>
+    <a href="/admin/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/admin/addOwner" class="btn btn-primary btn-block">Add Owner</a>
+    <a href="/admin/addReservation" class="btn btn-primary btn-block">Add Reservation</a>
+    <a href="/admin/cancelReservation" class="btn btn-primary btn-block">Cancel Reservation</a>
+    <a href="/admin/viewUsers" class="btn btn-primary btn-block">View Users</a>
+    <a href="/admin/viewReservations" class="btn btn-primary btn-block">View Reservation</a>
+    <a href="/admin/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/admin/manageRooms" class="btn btn-primary btn-block">Manage Rooms Each Hotel</a>
+    <a href="/admin/manageUsers" class="btn btn-primary btn-block">Manage Users Each Hotel</a>
+</div>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="content">
+    <div class="form-container">
+        <h1 class="text-center mb-4">Cancel Reservation</h1>
 
-    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <span th:text="${successMessage}"></span>
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <span th:text="${errorMessage}"></span>
-    </div>
-
-    <form th:action="@{/admin/cancelReservation}" method="post">
-        <div class="form-group">
-            <label for="reservationNumber">Reservation Number:</label>
-            <input type="text" class="form-control" id="reservationNumber" name="reservationNumber" th:field="*{reservationNumber}" required />
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Cancel Reservation</button>
-        <a href="/admin/home" class="btn btn-secondary">Back</a>
-    </form>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/admin/cancelReservation}" method="post">
+            <div class="form-group">
+                <label for="reservationNumber">Reservation Number:</label>
+                <input type="text" class="form-control" id="reservationNumber" name="reservationNumber" th:field="*{reservationNumber}" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Cancel Reservation</button>
+            <a href="/admin/home" class="btn btn-secondary btn-block">Back</a>
+        </form>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

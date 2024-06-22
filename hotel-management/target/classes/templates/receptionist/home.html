@@ -2,21 +2,90 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Receptionist Panel</title>
+    <title>Admin Panel</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #343a40;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            text-align: center;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-8 text-center">
-            <h1 class="mb-4">Receptionist Panel</h1>
-            <a href="/receptionist/addReservation" class="btn btn-primary">Add Reservation</a>
-            <a href="/receptionist/addComplaint" class="btn btn-primary">Add Complaint</a>
-            <a href="/receptionist/viewReservations" class="btn btn-primary">View Reservations</a>
-            <a href="/receptionist/manageRooms" class="btn btn-primary">View Rooms</a>
-            <a href="/receptionist/cancelReservation" class="btn btn-primary">Cancel Reservation</a>
-            <a href="/login" class="btn btn-secondary">Go to Login page</a>
-        </div>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="sidebar">
+    <h1>Receptionist Panel</h1>
+    <a href="/receptionist/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/receptionist/addReservation" class="btn btn-primary">Add Reservation</a>
+    <a href="/receptionist/addComplaint" class="btn btn-primary">Add Complaint</a>
+    <a href="/receptionist/viewReservations" class="btn btn-primary">View Reservations</a>
+    <a href="/receptionist/manageRooms" class="btn btn-primary">View Rooms</a>
+    <a href="/receptionist/cancelReservation" class="btn btn-primary">Cancel Reservation</a>
+</div>
+<div class="content">
+    <div class="dashboard">
+        <h2>Welcome to the Admin Dashboard</h2>
+        <!-- Dashboard content goes here -->
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -43,7 +43,7 @@ public class OwnerController {
     public String viewComplaints(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUsername(authentication.getName());
-        List<Client> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
+        List<Complaint> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
         model.addAttribute("complaints", complaints);
         return "owner/viewComplaints";
     }

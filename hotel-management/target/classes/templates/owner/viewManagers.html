@@ -1,34 +1,143 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>View Managers</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+        }
+        .form-control {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #343a40;
+            padding: 20px;
+            overflow-y: auto;
+            margin-left: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            text-align: center;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .table thead th {
+            background-color: #495057;
+            color: #fff;
+        }
+        .table tbody tr {
+            background-color: #fff;
+            color: #343a40;
+        }
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
+        }
+        .table tbody tr:hover {
+            background-color: #e2e2e2;
+        }
+        .table td, .table th {
+            border: 1px solid #6c757d;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>View Managers</h1>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Telephone</th>
-            <th>Address</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="manager : ${managers}">
-            <td th:text="${manager.username}"></td>
-            <td th:text="${manager.name}"></td>
-            <td th:text="${manager.surname}"></td>
-            <td th:text="${manager.telephone}"></td>
-            <td th:text="${manager.address}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <a href="/owner/home" class="btn btn-secondary">Back</a>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="sidebar">
+    <h1>Owner Panel</h1>
+    <a href="/owner/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/owner/addManager" class="btn btn-primary btn-block">Add Manager</a>
+    <a href="/owner/viewManagers" class="btn btn-primary btn-block">View Manager</a>
+    <a href="/owner/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/owner/manageRooms" class="btn btn-primary btn-block">Manage Rooms</a>
+    <a href="/owner/manageUsers" class="btn btn-primary btn-block">Manage Users</a>
+    <a href="/login" class="btn btn-secondary btn-block">Go to Login page</a>
+</div>
+<div class="content">
+    <div class="dashboard">
+        <h2>View Managers</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Telephone</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="manager : ${managers}">
+                <td th:text="${manager.username}"></td>
+                <td th:text="${manager.name}"></td>
+                <td th:text="${manager.surname}"></td>
+                <td th:text="${manager.telephone}"></td>
+                <td th:text="${manager.address}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="/owner/home" class="btn btn-secondary">Back</a>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

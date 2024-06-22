@@ -3,53 +3,171 @@
 <head>
     <title>Manage Users</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+        }
+        .form-control {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+        .sidebar {
+            background-color: #343a40;
+            padding: 20px;
+            width: 250px;
+            border-right: 1px solid #6c757d;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h1 {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex-grow: 1;
+            background-color: #343a40;
+            padding: 20px;
+            overflow-y: auto;
+            margin-left: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            text-align: center;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .table thead th {
+            background-color: #495057;
+            color: #fff;
+        }
+        .table tbody tr {
+            background-color: #fff;
+            color: #343a40;
+        }
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
+        }
+        .table tbody tr:hover {
+            background-color: #e2e2e2;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>Manage Users</h1>
-
-    <!-- Başarı mesajı -->
-    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <span th:text="${successMessage}"></span>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
+<div class="sidebar">
+    <h1>Owner Panel</h1>
+    <a href="/owner/home" class="btn btn-primary btn-block">Dashboard</a>
+    <a href="/owner/addManager" class="btn btn-primary btn-block">Add Manager</a>
+    <a href="/owner/viewManagers" class="btn btn-primary btn-block">View Manager</a>
+    <a href="/owner/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
+    <a href="/owner/manageRooms" class="btn btn-primary btn-block">Manage Rooms</a>
+    <a href="/owner/manageUsers" class="btn btn-primary btn-block">Manage Users</a>
+    <a href="/login" class="btn btn-secondary btn-block">Go to Login page</a>
+</div>
+<div class="content">
+    <div class="dashboard">
+        <h2>Manage Users</h2>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.surname}"></td>
+                <td th:text="${user.role.roleName}"></td>
+                <td th:text="${user.active ? 'Active' : 'Inactive'}"></td>
+                <td>
+                    <form th:action="@{/owner/updateUserStatus}" method="post">
+                        <input type="hidden" name="userId" th:value="${user.id}" />
+                        <input type="hidden" name="active" th:value="${!user.active}" />
+                        <button type="submit" class="btn btn-sm" th:classappend="${user.active ? 'btn-danger' : 'btn-success'}"
+                                th:text="${user.active ? 'Deactivate' : 'Activate'}"></button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="/owner/home" class="btn btn-secondary">Back</a>
     </div>
-    <!-- Hata mesajı -->
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <span th:text="${errorMessage}"></span>
-    </div>
-
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.id}"></td>
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.name}"></td>
-            <td th:text="${user.surname}"></td>
-            <td th:text="${user.role.roleName}"></td>
-            <td th:text="${user.active ? 'Active' : 'Inactive'}"></td>
-            <td>
-                <form th:action="@{/owner/updateUserStatus}" method="post">
-                    <input type="hidden" name="userId" th:value="${user.id}" />
-                    <input type="hidden" name="active" th:value="${!user.active}" />
-                    <button type="submit" class="btn btn-sm" th:classappend="${user.active ? 'btn-danger' : 'btn-success'}"
-                            th:text="${user.active ? 'Deactivate' : 'Activate'}"></button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a href="/owner/home" class="btn btn-secondary">Back</a>
-
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

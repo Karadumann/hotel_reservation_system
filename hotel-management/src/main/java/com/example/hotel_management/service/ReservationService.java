@@ -2,12 +2,12 @@ package com.example.hotel_management.service;
 
 import com.example.hotel_management.model.Reservation;
 import com.example.hotel_management.model.Room;
+import com.example.hotel_management.model.RoomStatus;
 import com.example.hotel_management.repository.ReservationRepository;
 import com.example.hotel_management.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,12 +20,22 @@ public class ReservationService {
     private RoomRepository roomRepository;
 
     public Reservation createReservation(Reservation reservation) {
+        // Check for double booking
+        List<Reservation> existingReservations = reservationRepository.findByRoomNumberAndDates(
+                reservation.getRoomNumber(), reservation.getStartDate(), reservation.getEndDate());
+
+        if (!existingReservations.isEmpty()) {
+            throw new IllegalArgumentException("The room is already booked for the selected dates.");
+        }
+
+        // Save reservation
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // Odanın durumunu güncelle
+        // Update room status to OCCUPIED
         Room room = roomRepository.findByRoomNumberAndHotelId(reservation.getRoomNumber(), reservation.getHotel().getId());
         if (room != null) {
             room.setOccupied(true);
+            room.setStatus(RoomStatus.OCCUPIED);
             room.setReservationNumber(reservation.getReservationNumber());
             roomRepository.save(room);
         }
@@ -44,6 +54,7 @@ public class ReservationService {
         Room room = roomRepository.findByRoomNumberAndHotelId(reservation.getRoomNumber(), reservation.getHotel().getId());
         if (room != null) {
             room.setOccupied(false);
+            room.setStatus(RoomStatus.AVAILABLE);
             room.setReservationNumber(null);
             roomRepository.save(room);
         }
