@@ -7,14 +7,11 @@ import com.example.hotel_management.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/receptionist")
@@ -22,6 +19,7 @@ public class ReceptionistController {
 
     @Autowired
     private RoomRepository roomRepository;
+
     @Autowired
     private ComplaintService complaintService;
 
@@ -30,14 +28,19 @@ public class ReceptionistController {
 
     @Autowired
     private RoomService roomService;
-   @Autowired
+
+    @Autowired
     private ReservationService reservationService;
 
     @Autowired
     private ClientService clientService;
 
     @GetMapping("/home")
-    public String receptionistHome() {
+    public String receptionistHome(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        List<Complaint> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
+        model.addAttribute("complaints", complaints);
         return "receptionist/home";
     }
 
@@ -123,12 +126,6 @@ public class ReceptionistController {
         }
     }
 
-    private Long getCurrentUserHotelId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByUsername(authentication.getName());
-        return user.getHotel().getId();
-    }
-
     @GetMapping("/addComplaint")
     public String addComplaintForm(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -155,7 +152,4 @@ public class ReceptionistController {
         }
         return "receptionist/addComplaint";
     }
-
-
-
 }

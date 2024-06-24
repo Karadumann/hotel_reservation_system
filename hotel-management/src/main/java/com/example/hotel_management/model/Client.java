@@ -17,7 +17,6 @@ public class Client {
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    // getters and setters
     public Long getId() {
         return id;
     }

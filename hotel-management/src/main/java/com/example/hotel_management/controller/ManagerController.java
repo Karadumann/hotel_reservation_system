@@ -1,7 +1,11 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.*;
+import com.example.hotel_management.model.Complaint;
+import com.example.hotel_management.model.Room;
+import com.example.hotel_management.model.RoomStatus;
+import com.example.hotel_management.model.User;
 import com.example.hotel_management.repository.RoomRepository;
+import com.example.hotel_management.repository.UserRepository;
 import com.example.hotel_management.service.ComplaintService;
 import com.example.hotel_management.service.RoomService;
 import com.example.hotel_management.service.UserService;
@@ -12,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.example.hotel_management.repository.UserRepository;
 
 import java.util.List;
 
@@ -36,7 +39,11 @@ public class ManagerController {
     private UserService userService;
 
     @GetMapping("/home")
-    public String managerHome() {
+    public String managerHome(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        List<Complaint> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
+        model.addAttribute("complaints", complaints);
         return "manager/home";
     }
 
@@ -48,6 +55,7 @@ public class ManagerController {
         model.addAttribute("complaints", complaints);
         return "manager/viewComplaints";
     }
+
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -61,7 +69,7 @@ public class ManagerController {
     }
 
     @PostMapping("/updateRoomStatus/{roomId}")
-    public String updateRoomStatus(@PathVariable("roomId") Long roomId, @RequestParam RoomStatus status, Model model) { // Long türüne çevrildi
+    public String updateRoomStatus(@PathVariable("roomId") Long roomId, @RequestParam RoomStatus status, Model model) {
         try {
             Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + roomId));
             room.setStatus(status);

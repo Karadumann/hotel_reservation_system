@@ -13,7 +13,6 @@ public class UserRole {
 
     private String roleName;
 
-    // Getters and setters
 
     public Long getId() {
         return id;

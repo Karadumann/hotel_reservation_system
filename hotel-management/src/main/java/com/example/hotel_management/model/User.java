@@ -30,7 +30,6 @@ public class User implements UserDetails {
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    // Getters and setters
 
     public Long getId() {
         return id;

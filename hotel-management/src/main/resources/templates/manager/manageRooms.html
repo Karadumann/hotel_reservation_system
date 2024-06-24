@@ -12,6 +12,7 @@
             margin: 0;
             display: flex;
         }
+
         .sidebar {
             background-color: #343a40;
             padding: 20px;
@@ -92,6 +93,18 @@
         .table th {
             font-weight: bold;
         }
+        .status-AVAILABLE {
+            color: green;
+        }
+        .status-OCCUPIED {
+            color: red;
+        }
+        .status-MAINTENANCE {
+            color: orange;
+        }
+        .status-CLEANING {
+            color: blue;
+        }
         .logout-btn {
             position: absolute;
             top: 20px;
@@ -139,7 +152,7 @@
             <tr th:each="room : ${rooms}">
                 <td th:text="${room.roomNumber}">Room Number</td>
                 <td th:text="${room.roomCategory}">Room Category</td>
-                <td th:text="${room.status}">Status</td>
+                <td th:text="${room.status}" th:classappend="'status-' + ${room.status}">Status</td>
                 <td>
                     <form th:action="@{/manager/updateRoomStatus/{roomId}(roomId=${room.id})}" method="post">
                         <select name="status" class="form-control">

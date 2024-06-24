@@ -5,6 +5,7 @@
     <title>Owner Panel</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background-color: #343a40;
@@ -47,17 +48,26 @@
             background-color: #343a40;
             padding: 20px;
             overflow-y: auto;
+            margin-left: 250px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
         }
         .dashboard {
             background: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            width: 80%;
+            width: 100%;
             text-align: center;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .chart-container {
+            width: 45%;
+            margin: 20px 0;
         }
         .logout-btn {
             position: absolute;
@@ -77,7 +87,7 @@
     <h1>Owner Panel</h1>
     <a href="/owner/home" class="btn btn-primary btn-block">Dashboard</a>
     <a href="/owner/addManager" class="btn btn-primary btn-block">Add Manager</a>
-    <a href="/owner/viewManagers" class="btn btn-primary btn-block">View Manager</a>
+    <a href="/owner/viewManagers" class="btn btn-primary btn-block">View Managers</a>
     <a href="/owner/viewComplaints" class="btn btn-primary btn-block">View Complaints</a>
     <a href="/owner/manageRooms" class="btn btn-primary btn-block">Manage Rooms</a>
     <a href="/owner/manageUsers" class="btn btn-primary btn-block">Manage Users</a>
@@ -86,10 +96,97 @@
 <div class="content">
     <div class="dashboard">
         <h2>Welcome to the Owner Dashboard</h2>
+        <div class="charts">
+            <div class="chart-container">
+                <h3>Complaints Overview</h3>
+                <canvas id="complaintsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Room Status Distribution</h3>
+                <canvas id="roomsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Managers Overview</h3>
+                <canvas id="managersChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    fetch('/api/owner/complaints-stats')
+        .then(response => response.json())
+        .then(data => {
+            const complaintsChart = new Chart(document.getElementById('complaintsChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Number of Complaints',
+                        data: data.values,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        });
+
+    fetch('/api/owner/room-status-stats')
+        .then(response => response.json())
+        .then(data => {
+            const roomsChart = new Chart(document.getElementById('roomsChart'), {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 205, 86, 0.2)',
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true }
+            });
+        });
+
+    fetch('/api/owner/managers-stats')
+        .then(response => response.json())
+        .then(data => {
+            const managersChart = new Chart(document.getElementById('managersChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true }
+            });
+        });
+</script>
 </body>
 </html>

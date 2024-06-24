@@ -21,7 +21,6 @@ public class Hotel {
     @JsonManagedReference
     private Set<Room> rooms;
 
-    // Getters ve setters
 
     public Long getId() {
         return id;

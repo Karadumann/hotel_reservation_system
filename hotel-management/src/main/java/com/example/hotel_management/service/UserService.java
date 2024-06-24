@@ -77,7 +77,9 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
+    public List<User> getUsersByHotelIdAndRole(Long hotelId, String roleName) {
+        return userRepository.findByHotelIdAndRoleRoleName(hotelId, roleName);
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return findByUsername(username);

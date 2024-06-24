@@ -9,12 +9,9 @@
   <style>
     body {
         background-color: #343a40;
-        height: 100vh;
         margin: 0;
         display: flex;
-        color: #fff;
     }
-
     .sidebar {
         background-color: #343a40;
         padding: 20px;
@@ -51,7 +48,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        width: calc(100% - 250px); /* Adjust content width */
+        min-height: 100vh;
     }
     .form-container {
         background: #fff;
@@ -60,7 +57,6 @@
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         width: 100%;
         max-width: 800px;
-        color: #343a40;
     }
     .alert {
         color: #fff;
@@ -91,69 +87,34 @@
         document.getElementById("startDate").setAttribute("min", today);
         document.getElementById("endDate").setAttribute("min", today);
 
+        initializeIntlTelInput();
+        disableUnavailableRooms();
+    });
+
+    function initializeIntlTelInput() {
         var input = document.querySelector("#telephone");
         window.intlTelInput(input, {
-            initialCountry: "auto",
-            geoIpLookup: function(success, failure) {
-                fetch('https://ipinfo.io?token=free')
-                    .then(function(resp) {
-                        return resp.json();
-                    })
-                    .then(function(resp) {
-                        var countryCode = (resp && resp.country) ? resp.country : "us";
-                        success(countryCode);
-                    })
-                    .catch(function() {
-                        success("us");
-                    });
-            },
+            initialCountry: "us",
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
         });
+    }
 
+    function disableUnavailableRooms() {
         var roomSelect = document.getElementById("room");
-        roomSelect.addEventListener("change", function() {
-            var roomNumber = roomSelect.value;
-            fetch(`/api/reservations/roomReservations?roomNumber=${roomNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    disableUnavailableDates(data);
-                });
-        });
+        var options = roomSelect.options;
 
-        function disableUnavailableDates(reservations) {
-            var startDateInput = document.getElementById("startDate");
-            var endDateInput = document.getElementById("endDate");
-
-            function checkDateOverlap(date) {
-                var selectedDate = new Date(date);
-                return reservations.some(function(reservation) {
-                    var resStartDate = new Date(reservation.startDate);
-                    var resEndDate = new Date(reservation.endDate);
-                    return (selectedDate >= resStartDate && selectedDate <= resEndDate);
-                });
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option.text.includes('AVAILABLE')) {
+                option.disabled = false;
+            } else {
+                option.disabled = true;
             }
-
-            startDateInput.addEventListener("change", function() {
-                if (checkDateOverlap(startDateInput.value)) {
-                    alert("Selected start date overlaps with an existing reservation.");
-                    startDateInput.value = "";
-                } else {
-                    endDateInput.setAttribute("min", startDateInput.value);
-                }
-            });
-
-            endDateInput.addEventListener("change", function() {
-                if (checkDateOverlap(endDateInput.value)) {
-                    alert("Selected end date overlaps with an existing reservation.");
-                    endDateInput.value = "";
-                }
-            });
         }
-    });
+    }
   </script>
 </head>
 <body>
-<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
 <div class="sidebar">
   <h1>Receptionist Panel</h1>
   <a href="/receptionist/home" class="btn btn-primary btn-block">Dashboard</a>
@@ -163,6 +124,7 @@
   <a href="/receptionist/manageRooms" class="btn btn-primary">View Rooms</a>
   <a href="/receptionist/cancelReservation" class="btn btn-primary">Cancel Reservation</a>
 </div>
+<button class="logout-btn" onclick="window.location.href='/login'"><i class="fas fa-sign-out-alt"></i></button>
 <div class="content">
   <div class="form-container">
     <h1 class="text-center mb-4">Add Reservation</h1>
@@ -171,7 +133,7 @@
       Reservation has been successfully added.
     </div>
 
-    <form th:action="@{/admin/addReservation}" method="post">
+    <form th:action="@{/receptionist/addReservation}" method="post">
       <fieldset>
         <legend>Client Information</legend>
         <div th:object="${client}">
@@ -206,16 +168,13 @@
         <legend>Reservation Information</legend>
         <div th:object="${reservation}">
           <div class="form-group">
-            <label for="hotel">Hotel:</label>
-            <select class="form-control" id="hotel" name="hotelId" required onchange="loadRooms()">
-              <option value="" disabled selected>Select a Hotel</option>
-              <option th:each="hotel : ${hotels}" th:value="${hotel.id}" th:text="${hotel.name}"></option>
-            </select>
-          </div>
-          <div class="form-group">
             <label for="room">Room:</label>
-            <select class="form-control" id="room" th:field="*{roomNumber}">
+            <select class="form-control" id="room" th:field="*{roomNumber}" th:onchange="disableUnavailableRooms()">
               <option value="" disabled selected>Select a Room</option>
+              <option th:each="room : ${rooms}"
+                      th:value="${room.roomNumber}"
+                      th:text="${room.roomNumber + ' - ' + room.roomCategory + ' - ' + room.status}">
+              </option>
             </select>
           </div>
           <div class="form-group">
@@ -230,7 +189,7 @@
       </fieldset>
 
       <button type="submit" class="btn btn-primary btn-block">Add Reservation</button>
-      <a href="/admin/home" class="btn btn-secondary btn-block">Back</a>
+      <a href="/receptionist/home" class="btn btn-secondary btn-block">Back</a>
     </form>
   </div>
 </div>

@@ -12,6 +12,18 @@
             margin: 0;
             display: flex;
         }
+        .status-AVAILABLE {
+            color: green;
+        }
+        .status-OCCUPIED {
+            color: red;
+        }
+        .status-MAINTENANCE {
+            color: orange;
+        }
+        .status-CLEANING {
+            color: blue;
+        }
         .sidebar {
             background-color: #343a40;
             padding: 20px;
@@ -167,7 +179,7 @@
                 <td th:text="${room.hotel.name}">Hotel</td>
                 <td th:text="${room.roomNumber}">Room Number</td>
                 <td th:text="${room.roomCategory}">Room Category</td>
-                <td th:text="${room.status}">Status</td>
+                <td th:text="${room.status}" th:classappend="'status-' + ${room.status}">Status</td>
                 <td>
                     <form th:action="@{/admin/updateRoomStatus/{roomId}(roomId=${room.id})}" method="post" style="display: inline-block;">
                         <select name="status" class="form-control" style="display: inline-block; width: auto;">

@@ -24,7 +24,7 @@ public class ComplaintService {
     private HotelRepository hotelRepository;
 
     public Complaint addComplaint(Long clientId, Long hotelId, String complaintText) {
-        Client client = clientRepository.findById((long) Math.toIntExact(clientId))
+        Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid client ID: " + clientId));
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid hotel ID: " + hotelId));
@@ -34,9 +34,11 @@ public class ComplaintService {
         complaint.setHotel(hotel);
         complaint.setComplaintText(complaintText);
         complaint.setCreatedAt(LocalDateTime.now());
+        complaint.setResolved(false);
 
         return complaintRepository.save(complaint);
     }
+
     public List<Complaint> getAllComplaints() {
         return complaintRepository.findAll();
     }

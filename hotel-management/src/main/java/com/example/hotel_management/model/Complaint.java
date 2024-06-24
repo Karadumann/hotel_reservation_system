@@ -11,6 +11,7 @@ public class Complaint {
 
     private String complaintText;
     private LocalDateTime createdAt;
+    private boolean resolved = false;  // Add default value
 
     @ManyToOne
     @JoinColumn(name = "client_id")
@@ -20,7 +21,6 @@ public class Complaint {
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    // Getters and setters
 
     public Long getId() {
         return id;
@@ -44,6 +44,14 @@ public class Complaint {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 
     public Client getClient() {

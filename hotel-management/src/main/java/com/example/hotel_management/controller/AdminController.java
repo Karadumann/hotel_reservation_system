@@ -48,7 +48,9 @@ public class AdminController {
     private RoomRepository roomRepository;
 
     @GetMapping("/home")
-    public String adminHome() {
+    public String adminHome(Model model) {
+        List<Complaint> complaints = complaintService.getAllComplaints();
+        model.addAttribute("complaints", complaints);
         return "admin/home";
     }
 
@@ -58,6 +60,7 @@ public class AdminController {
         model.addAttribute("complaints", complaints);
         return "admin/viewComplaints";
     }
+
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         List<Hotel> hotels = hotelRepository.findAll();

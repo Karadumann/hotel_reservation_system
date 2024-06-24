@@ -31,7 +31,6 @@ public class Reservation {
         reservationNumber = UUID.randomUUID().toString();
     }
 
-    // Getters and setters
 
     public Integer getId() {
         return id;

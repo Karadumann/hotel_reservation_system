@@ -4,7 +4,6 @@ public class RoomStatusUpdateRequest {
     private String roomNumber;
     private String status;
 
-    // Getters and Setters
     public String getRoomNumber() {
         return roomNumber;
     }

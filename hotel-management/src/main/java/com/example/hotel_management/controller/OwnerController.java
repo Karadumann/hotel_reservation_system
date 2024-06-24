@@ -1,6 +1,9 @@
 package com.example.hotel_management.controller;
 
-import com.example.hotel_management.model.*;
+import com.example.hotel_management.model.Complaint;
+import com.example.hotel_management.model.Room;
+import com.example.hotel_management.model.RoomStatus;
+import com.example.hotel_management.model.User;
 import com.example.hotel_management.repository.RoomRepository;
 import com.example.hotel_management.repository.UserRepository;
 import com.example.hotel_management.service.ComplaintService;
@@ -36,9 +39,14 @@ public class OwnerController {
     private UserService userService;
 
     @GetMapping("/home")
-    public String ownerHome() {
+    public String ownerHome(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUsername(authentication.getName());
+        List<Complaint> complaints = complaintService.getComplaintsByHotelId(user.getHotel().getId());
+        model.addAttribute("complaints", complaints);
         return "owner/home";
     }
+
     @GetMapping("/viewComplaints")
     public String viewComplaints(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,6 +55,7 @@ public class OwnerController {
         model.addAttribute("complaints", complaints);
         return "owner/viewComplaints";
     }
+
     @GetMapping("/manageRooms")
     public String manageRoomsForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -165,4 +174,7 @@ public class OwnerController {
         }
         return "redirect:/owner/manageUsers";
     }
+
+
+
 }
