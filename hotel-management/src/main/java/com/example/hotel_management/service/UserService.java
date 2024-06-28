@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -83,5 +84,14 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return findByUsername(username);
+    }
+    public List<User> getUsersByRole(String roleName) {
+        return userRepository.findByRoleRoleName(roleName);
+    }
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 }

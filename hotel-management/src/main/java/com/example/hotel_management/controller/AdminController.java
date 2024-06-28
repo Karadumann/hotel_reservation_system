@@ -232,4 +232,34 @@ public class AdminController {
     public List<RoomDTO> getRooms(@RequestParam Long hotelId) {
         return roomService.getRoomsByHotelId(hotelId);
     }
+
+    @GetMapping("/changeOwner")
+    public String changeOwnerForm(Model model) {
+        List<Hotel> hotels = hotelService.getAllHotels();
+        List<User> owners = userService.getUsersByRole("ROLE_OWNER");
+        model.addAttribute("hotels", hotels);
+        model.addAttribute("owners", owners);
+        return "admin/changeOwner";
+    }
+
+    @PostMapping("/changeOwner")
+    public String changeOwnerSubmit(@RequestParam("hotelId") Long hotelId, @RequestParam("ownerId") Long ownerId, Model model) {
+        try {
+            Hotel hotel = hotelService.findById(hotelId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid hotel ID: " + hotelId));
+            User newOwner = userService.findById(ownerId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid owner ID: " + ownerId));
+
+            hotel.setOwner(newOwner);
+            hotelService.saveHotel(hotel);
+
+            newOwner.setHotel(hotel);
+            userService.saveUser(newOwner);
+
+            model.addAttribute("successMessage", "Owner changed successfully for Hotel: " + hotel.getName());
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error changing owner: " + e.getMessage());
+        }
+        return changeOwnerForm(model);
+    }
 }

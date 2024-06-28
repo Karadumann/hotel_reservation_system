@@ -18,5 +18,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByRoomNumber(String roomNumber);
 
     List<Reservation> findByHotelId(Long hotelId);
-
 }

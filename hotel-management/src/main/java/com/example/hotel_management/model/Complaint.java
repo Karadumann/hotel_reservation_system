@@ -11,7 +11,7 @@ public class Complaint {
 
     private String complaintText;
     private LocalDateTime createdAt;
-    private boolean resolved = false;  // Add default value
+    private boolean resolved = false;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

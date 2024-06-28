@@ -28,10 +28,8 @@ public class ReservationService {
             throw new IllegalArgumentException("The room is already booked for the selected dates.");
         }
 
-        // Save reservation
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // Update room status to OCCUPIED
         Room room = roomRepository.findByRoomNumberAndHotelId(reservation.getRoomNumber(), reservation.getHotel().getId());
         if (room != null) {
             room.setOccupied(true);

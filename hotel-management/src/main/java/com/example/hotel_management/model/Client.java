@@ -11,7 +11,7 @@ public class Client {
     private String surname;
     private String telephone;
     private String address;
-    private String email;  // Yeni alan
+    private String email;
     private String birthdate;
     @ManyToOne
     @JoinColumn(name = "hotel_id")

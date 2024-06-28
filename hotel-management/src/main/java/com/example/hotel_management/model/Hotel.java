@@ -21,6 +21,9 @@ public class Hotel {
     @JsonManagedReference
     private Set<Room> rooms;
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 
     public Long getId() {
         return id;
@@ -60,5 +63,12 @@ public class Hotel {
 
     public void setRooms(Set<Room> rooms) {
         this.rooms = rooms;
+    }
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }
