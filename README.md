@@ -39,3 +39,6 @@ The Hotel Management System is a comprehensive solution designed to manage vario
 Use the following default credentials to log in:
 - **Username: admin**
 - **Password: admin**
+
+### Contact
+- **If you have any questions or feedback, karaduman188@gmail.com / berk@laniatusgames.com**
