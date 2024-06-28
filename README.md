@@ -35,3 +35,7 @@ The Hotel Management System is a comprehensive solution designed to manage vario
    ```sh
    git clone https://github.com/your-username/hotel-management-system.git
    cd hotel-management-system
+
+Use the following default credentials to log in:
+- **Username: admin**
+- **Password: admin**
