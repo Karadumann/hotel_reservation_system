@@ -41,4 +41,4 @@ Use the following default credentials to log in:
 - **Password: admin**
 
 ### Contact
-- **If you have any questions or feedback, karaduman188@gmail.com / berk@laniatusgames.com**
+- **If you have any questions or feedback, info@berkkaraduman.com**
